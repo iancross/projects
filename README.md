@@ -1,4 +1,4 @@
 projects
 
-This is a collection of a small portion of my personal and school programming projects.
+This is a small portion of my personal and school programming projects.
 
