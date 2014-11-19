@@ -1,0 +1,4 @@
+#!/bin/sh
+/usr/bin/time -f "%e midmark.um" ./um midmark.um > /dev/null
+/usr/bin/time -f "%e sandmark.umz" ./um sandmark.umz > /dev/null
+valgrind --tool=callgrind --dump-instr=yes ./um midmark.um

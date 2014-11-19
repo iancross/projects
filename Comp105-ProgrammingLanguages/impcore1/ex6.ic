@@ -1,0 +1,14 @@
+;Ian Cross
+
+;returns the mth term of the fibonacci sequence
+;if bad input, return -1
+(define fib (m)
+	(if (< m 0)		;checks for nonnegative input
+	-1
+	(recur_fib m))
+)
+(define recur_fib (m) 
+	(if (< m 2)
+	m
+	(+ (recur_fib (- m 1)) (recur_fib (- m 2))))
+)

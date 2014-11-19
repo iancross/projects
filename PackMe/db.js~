@@ -1,0 +1,129 @@
+var url = require('url');
+var express = require('express');
+var app = express(express.logger());
+app.use(express.bodyParser());
+app.set('title', 'nodeapp');
+
+var mongoUri = process.env.MONGOLAB_URI || 
+  process.env.MONGOHQ_URL ||
+ 'mongodb://josh:ihopethisworks@widmore.mongohq.com:10000/jfishpackme';
+var mongo = require('mongodb');
+var db = mongo.Db.connect(mongoUri, function (error, databaseConnection) {
+        db = databaseConnection;
+});
+
+
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+  res.header('Access-Control-Allow-HEADERS', 'Content-Type');
+  next();
+}
+
+app.configure(function() {
+//  app.set('views', __dirname + '/views');
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.methodOverride());
+  app.use(allowCrossDomain);
+  app.use(app.router);
+  app.use(express.static(__dirname + '/WebResources'));
+});
+    
+  
+app.post('/travels.json', function (request, response)
+{
+  var username = request.body.username;
+  var username = username.toLowerCase();
+  var destination = request.body.destination;
+  var destination = destination.toLowerCase();
+  var lat = request.body.lat;
+  var lng = request.body.lng;
+  var items = request.body.items;
+  var created_at = new Date();
+  
+  var post_string = {'username':username,'destination':destination,'items':items,'created_at':created_at};
+  db.collection('travels', function(error, collection) 
+  {
+    if(!error)
+    {
+      collection.insert(post_string); 
+    }
+    else
+    {
+      response.send("Error! Data was not saved");
+    }
+  });
+});
+
+app.post('/users.json', function (request, response)
+{
+  var username = request.body.username;
+  var username = username.toLowerCase();
+  var email = request.body.email;
+  var email = email.toLowerCase();
+  var created_at = new Date();
+  var expires_at = new Date();
+  exipres_at.setDate(created_at.getDate()+30);
+  
+  var post_string = {'username':username, 'email':email, 'created_at':created_at, 'expires_at':expires_at};
+  db.collection('users', function(error, collection) 
+  {
+    if(!error)
+    {
+      collection.insert(post_string); 
+    }
+    else
+    {
+      response.send("Error! Data was not saved");
+    }
+  });
+});
+
+app.get('/results', function(request, response)
+{
+  var lat = request.query.lat;
+  var lng = request.query.lng;
+  db.collection('travels', function(error, collection) 
+  {
+    if(!error)
+    {
+      response.set('Content-Type', 'text/json');
+      collection.find({"lat": {$gt: lat-10, $lt: lat+10},"lng": {$gt: lng-10,$lt: lng+10}}, {'items': 1}).toArray(function(error, result) 
+      {
+        response.send(result);
+      });
+    }
+    else
+    {
+      response.send("Error! Can't collect data");
+    }
+  });
+});
+
+app.get('/', function(req, res){
+  res.set('Content-Type', 'text/html');
+  res.sendfile('PackMe-responsive.html');
+});
+
+app.get('/userresults', function(request, response)
+{
+  var today = new Date();
+  db.collection('users', function(error, collection) 
+  {
+    if(!error)
+    {
+      response.set('Content-Type', 'text/json');
+      collection.find({"expires_at": {$lt: date}}).toArray(function(error, result) 
+      {
+        response.send(result);
+      });
+    }
+    else
+    {
+      response.send("Error! Can't collect data");
+    }
+  });
+});
+
+app.listen(process.env.PORT || 3000);

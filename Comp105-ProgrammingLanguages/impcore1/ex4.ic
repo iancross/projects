@@ -1,0 +1,30 @@
+;Ian Cross
+
+;------EXP
+;returns the value of m^n and if bad input, returns -1
+(define exp (m n)
+	(if (< n 0)		;check bad input
+	-1
+	(else_recur_exp m n))
+)
+;else_recur_exp is the extension of exp(m n) and returns m^n recursively
+(define else_recur_exp (m n) 
+	(if (< n 1)
+		 1 
+	(* m (else_recur_exp m (- n 1))))
+)
+
+;------LOG
+;returns the least int l so that m^(l+1) > n
+;if bad input, return -1
+(define log (m n)
+	(if (or (< m 2) (< n 1))	;check bad input
+	-1
+	(else_recur_log m n 0))
+)
+;else_recur_log is the extension of log(m n) and finds log(m n) recursively
+(define else_recur_log (m n iter)
+	(if (> (exp m iter) n)
+		(- iter 1)
+	(else_recur_log m n (+ iter 1)))
+)

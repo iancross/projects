@@ -1,0 +1,116 @@
+/*	fgroups.c
+ *	by Ian Cross and Alison Tai
+ *	Homework 1: Understanding and Using Interfaces
+ *
+ *	
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <table.h>
+#include <set.h>
+#include <atom.h>
+#include <string.h>
+
+/*Function Declarations*/
+void input(FILE*, Table_T*);
+void insert_atom(Table_T*, char*, char*);
+void print_table(Table_T*); 
+void print_set(Set_T*);
+
+/*Function Definitions*/
+int main (int argc, char** argv)
+{
+	FILE *fp;
+	Table_T ftable = Table_new(1, NULL, NULL);  
+	printf("length: %d\n", Table_length(ftable));
+	
+	if (argc == 1) {
+		fp = stdin;
+		input(fp, &ftable);
+		printf("length: %d\n", Table_length(ftable));
+		print_table(&ftable);
+	} else {
+		fprintf(stderr, "%s: %s\n",
+			argv[0], "Could not open file for reading");
+		exit(1);
+	}
+}
+
+void input(FILE* fp, Table_T* table)
+{
+	char line[1000];
+	char fingerprint[512];
+	char name[500];
+
+	while(fgets(line, 1000, fp) != NULL) {
+		/*Separates fingerprint and name into different strings*/
+		int index = 0;
+		int name_index = 0;
+
+		while (line[index] != ' ') {
+			fingerprint[index] = line[index];
+			index++;
+		}
+		fingerprint[index] = '\0';
+		while (line[index] == ' ') {
+			index++;
+		}
+		while ((line[index] != '\n') && (name_index < 500)) {
+			name[name_index] = line[index];
+			index++;
+			name_index++;
+		}
+		name[name_index] = '\0';
+		//printf("%s, %s\n", fingerprint, name);
+
+		insert_atom(table, fingerprint, name);
+	}
+
+}
+
+void insert_atom(Table_T* table, char* fingerprint, char* name)
+{
+	const char *key;
+	const char *value;
+	Set_T *old_set;   	
+
+	/*Turns fingerprint and name strings into Hanson atoms*/
+	key = Atom_string(fingerprint);
+	value = Atom_string(name);
+
+	/*Put name into a set*/
+	Set_T new_set = Set_new(1, NULL, NULL);
+	Set_put(new_set, value);
+	
+     	/*Puts the key and value set into the Hanson table*/
+	old_set = Table_put(*table, key, new_set);
+	if (old_set != NULL) {
+		printf("old set is not NULL\n");
+	        new_set = Set_union(*old_set, new_set);
+		Table_put(*table, key, new_set);
+	}
+}
+
+void print_table(Table_T* table)
+{
+	int table_len = Table_length(*table);
+	void **table_array = Table_toArray(*table, NULL);
+	
+	for (int i=1; i<(2*table_len); i += 2){
+	        if(Set_length((Set_T)table_array[i]) > 1) {
+	                print_set((Set_T *)&table_array[i]);
+			printf("\n");
+	    	}
+	}
+}
+
+void print_set(Set_T* set)
+{
+        int set_len = Set_length(*set);
+	void **set_array = Set_toArray(*set, NULL);
+	for (int i=0; i<set_len; i++) {
+	        //printf("printing set\n");
+	        printf("%s\n", (char *)set_array[i]);
+	}
+}

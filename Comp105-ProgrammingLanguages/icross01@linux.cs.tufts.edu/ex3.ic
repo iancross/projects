@@ -1,0 +1,10 @@
+;Ian Cross
+
+;returns the sum of m + (m+1) + ... + n
+;if bad input, return m
+
+(define sigma (m n) 
+	(if (>= m n) 
+		n 
+	(+ m (sigma (+ m 1) n)))
+)

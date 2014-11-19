@@ -1,0 +1,159 @@
+Ian Cross and Dan Defossez
+
+Part A DESIGN 
+----------------------------------------------------------------------------
+
+Math:  To go from a client's coordinate to our pointer, we use the 
+following conversion:
+
+(starting at index (0, 0) for all arrays)
+
+To get block: (col/blocksize, row/blocksize) [integer division]
+
+To get (local) elem in block: (col%blocksize, row%blocksize)
+
+
+1. We are trying to represent a 2D array, but we are representing it in a way
+that is more memory efficient. This doesn't change the way the client 
+interacts with it.
+
+2.
+extern T UArray2b_new (int width, int height, int size, int blocksize);
+        Creates a new blocked 2D array of specified width, height, and block 
+        size. returns a pointer to the array.
+
+extern T UArray2b_new_64K_block(int width, int height, int size);
+        Creates a new blocked 2D array with a default block size of 64 and a
+        specified width and height. returns pointer to the array
+
+extern void UArray2b_free (T *array2b);
+        Frees memory allocated by UArray2b.
+        
+extern int UArray2b_width (T array2b);
+        Returns the width of the 2D array.
+
+extern int UArray2b_height(T array2b);
+        Returns the height.
+
+extern int UArray2b_size (T array2b);
+        Returns the size of each element in the 2D array (in Bytes)
+
+extern int UArray2b_blocksize(T array2b);
+        Returns the square root of the maximum number of elements in each 
+        block.
+
+extern void *UArray2b_at(T array2b, int i, int j);
+        Returns a void pointer to the element in the specified index.
+
+extern void UArray2b_map(T array2b,void apply(int i, int j, T array2b, 
+                                             void *elem, void *cl), void *cl);
+        Applies a user defined function to each element in each block in 
+        the array in a row major fashion.
+
+4. We are going to be using a UArray2_T of pointers to UArray2_T. Our 
+implementation of UArray2_T is just a UArray_T so it is guaranteed that each  
+block in the client's 2D array consist of contiguous memory locations.
+
+The invariant is that given a proper block size, every element in the block 
+will be contiguous in memory.
+
+5. Again, this interface represents the ADT of a blocked 2D array. (The 
+UArray2_T of UArray2_Ts will represent the UArray2b_T)
+
+6. We will use the apply function part of the mapping function in UArray2b 
+to test all of the functions by inserting data, manipulating, and printing.
+
+
+-----------------------------------------------------------------------------
+Part C Design
+-----------------------------------------------------------------------------
+
+
+1. We are trying to solve the problem of rotating a PPM image in increments
+of 90 degrees.
+
+2. A 10x10 image, with white pixels everywhere but in the top left corner 
+(0, 0).
+   A 10x10 image with a line going from top to bottom along the middle.
+
+   Basically, any image that is small and easy to see how it's been rotated
+will help clarify the problem.
+
+3. The outputs associated with these inputs would simply be the rotated
+versions of the inputs. (With the same scale, and type also remains the
+same)
+
+4. The first step getting input working, on both stdin and via argc.
+
+   After that, we'll need to use pnmrdr to load an image into a 2d array.
+ 
+
+   From there, we'll take in the argument and either rotate the image 
+   using the following conversions:
+   This is specific for each index.
+        For 90 degrees: 
+                The new column (x) = height - current_row - 1
+                The new row (y) = current_col
+        For 180:
+                The new column (x) = width - current_col - 1
+                the new row (y) = height - current_row - 1
+
+  OR
+
+  Copy the image in the order specified (block_major, row_major, col_major)
+
+
+5. The data in the first step is a ppm image, either on stdin or an arg.
+
+   The second step's data will be a Pnmrdr_T and a UArray2_T.
+
+   The rotation requires a second UArray2_T to store the output image.
+
+   Copying the image in a block_major fashion requires 2 UArray2b_Ts, while
+   copying in any other order will require 2 UArray_Ts.
+
+6. As mentioned above, we'll use a few simple equations to convert 
+indices to the new indices.
+
+        For 90 degrees: 
+                The new column (x) = height - current_row - 1
+                The new row (y) = current_col
+        For 180:
+                The new column (x) = width - current_col - 1
+                the new row (y) = height - current_row - 1
+
+7. We'll use the UArray2 and UArray2b, and a2methods abstractions.
+
+8. We won't be using any additional abstractions, other than the ones 
+mentioned above.
+
+9. While we're rotating or copying the image, any pixel that we have
+ gotten to in the source image A2 will have been copied to the new
+ location in the new rotated A2.
+
+10. See 6.
+
+11. Major components:
+        
+        ADTs for UArray2, and UArray2b, a2methods
+        For interfaces, see associated .h files
+        
+        Functions:
+                Load, rotate 90, rotate 180
+                copy row major, copy col major, copy block major
+
+12. The functions will modify data stored in the ADT A2. which will modify
+either the UArray2, or UArray2b. 
+
+13. Test cases include the examples in number 2, large images to see how
+well it handles memory. Bad inputs will be passed in as well.
+
+14. Our invariant states that while rotating an image, every pixel that we 
+have gotten to so far has been copied into its new location in the rotated 
+image. At the end of execution, every pixel will have been copied into the new 
+rotated image accordingly.  Therefore, there will be no way it does not work 
+correctly.
+
+
+
+

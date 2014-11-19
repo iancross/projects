@@ -1,0 +1,57 @@
+Names: Dan Defossez and Ashley Hedberg
+
+Sources used:
+    1. Hanson, C Interfaces and Implementations
+    2. Pnmrdr interface, http://www.cs.tufts.edu/comp/40/progs/pnmrdr.html
+    3. UArray interface (supplement to Hanson), 
+       http://www.cs.tufts.edu/comp/40/readings/uarray.pdf
+    4. Comp 40 TA (whoever was on office hours on 2/4 at 7:00 pm--we're sorry
+       we don't know his name) about submission of the compile script
+
+===Part A===
+Our UArray2 interface is implemented as a one-dimensional UArray with a
+length of width * height. Coordinates received from the client are converted 
+into a one-dimensional array index using the equation (y * width) + x. The
+invariant for the implementation is that each two-dimensional set of
+coordinates specified by the user maps to exactly one one-dimensional index
+via the formula mentioned earlier. The array is polymorphic and can contain
+any data structure. Setting width and/or height to zero when using 
+UArray2_new is acceptable, but attempts to modify values contained in such 
+an array will raise an assertion that aborts the program.
+
+All portions of our interface and implementation work as expected. There are
+no segmentation faults, and memory leaks only occur when the program
+terminates due to a failed assertion or checked runtime error.
+
+===Part B===
+Our Bit2 interface is implemented as a one-dimensional Bit vector with a
+length of width * height. Again, coordinates received from the client are
+converted into a one-dimensional Bit vector index using the equation 
+(y * width) + x. Similarly, the invariant for the implementation is that 
+each two-dimensional set of coordinates specified by the user maps to
+exactly one one-dimensional index via the formula mentioned earlier. Setting 
+width and/or height to zero when using Bit2_new is acceptable, but attempts
+to modify values contained in such an array will raise an assertion that 
+aborts the program.
+
+All portions of our interface and implementation work as expected. There are
+no segmentation faults, and memory leaks only occur when the program
+terminates due to a failed assertion or checked runtime error.
+
+===Part C===
+All parts of our sudoku solver work as expected. There are no segmentation
+faults or memory leaks. The program correctly terminates under exit(0) if 
+the puzzle has been solved correctly and under exit(1) if the input file is 
+a valid portable graymap that is not solved. The program raises an assertion 
+and aborts if the file is a valid portable anymap file that is NOT a 
+portable graymap, or if the input file cannot be opened by the Pnmrdr 
+interface.
+
+===Part D===
+All parts of our unblack edges program work as expected. There are no 
+segmentation faults or memory leaks. The program prints an error message and
+terminates if the input file is not a valid portable bitmap. Otherwise, the
+black edges are correctly converted to white pixels using a while loop, three
+Hanson stacks, and a depth-first search algorithm.
+
+Total number of hours worked: 17

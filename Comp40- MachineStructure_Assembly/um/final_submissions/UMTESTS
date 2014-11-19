@@ -1,0 +1,9 @@
+test_add_and_mult.um
+test_conditional_move.um
+test_div_and_nand.um
+test_freed_mem.um
+test_halt.um
+test_input.um
+test_load_and_output.um
+test_load_program.um
+test_map_store_load.um

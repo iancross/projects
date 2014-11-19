@@ -1,0 +1,14 @@
+One technique we both have incorporated into our programming practice since 
+the beginning of the semester is using a single point of truth wherever
+possible. This means that, instead of using values throughout our code, we
+define them in one place at the beginning of our program and reuse them. For 
+example, in the sudoku solver, we declared the dimension of the sudoku puzzle 
+to be solved (9x9) as a global constant; all of our loop guards used this 
+constant, rather than the number 9. This keeps our code consistent and 
+modular. A change in the global constant automatically updates all code using 
+this constant to the new value. For example, if a user wanted to run the
+sudoku program on a puzzle with dimensions of 12x12, it would require changing
+the DIMENSION constant to 12, along with a few other changes. If the DIMENSION
+constant had not existed, the number 9 would need to be changed to the number
+12 in multiple places throughout the code. This would have been less efficient
+and more prone to errors.

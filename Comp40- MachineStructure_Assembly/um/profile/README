@@ -1,0 +1,67 @@
+README - Universal Machine 
+Ian Cross and Emmett Moore
+4/16/13
+
+-------------------------------------------------------------------------
+Giving credit where credit is due: 
+        We didn't really use any extra sources
+-------------------------------------------------------------------------
+All functions have been correctly implemented, and we have successfully 
+created a Universal Turing Machine that runs super fast. 
+-------------------------------------------------------------------------
+Old Speed Test:
+
+In midmark.um 85070521 instructions were executed in 3.88 seconds.
+This means that it takes approx 2.27 seconds per 50 million instructions.
+
+In the new tests, we executed 4221139831 instructions in midmark in 0.57 seconds. We also got sandmark to run in 14.06 seconds.
+-------------------------------------------------------------------------
+Approximate working times:
+        analyzing design: <1 hours
+        solving/coding: 15 hours
+
+
+-------------------------------------------------------------------------
+Assembly Code Analysis
+
+We found that the most costly function call, after profiling our universal 
+machine, was segMem_map. It takes up about 9% of instructions in the 
+program. We made the following observations of the assembly code:
+
+Things we noticed:
+
+1.Initially, when we call this function, 7 arguments are pushed onto the 
+stack frame. This could potentially be expensive if the function is 
+called many times - which it is. Possibly a better solution would be to 
+inline the function. This would ensure that these arguments are already 
+on the stack and there would be no need for restacking.
+
+2. Right after this, there are also several register stores. 
+Again, this could be avoided if these values were already in register by 
+the time the function was called. Instead of passing in all of the 
+arguments, the register values could just be accessed immediately.
+
+3. Also, we left a few assertion statements in this function, 
+but assertions each take several instructions to complete. You have to 
+move a value into a register, move another value into register, 
+compare those 2 registers, then do a conditional jump. We had 3 assertions 
+in this function, and if we tested each of those each time this function 
+is called, we would have over 4 million wasted instructions. Our 
+conclusion is that we would end up taking these assertions out in all but 
+the most necessary cases. Again, it’s the case of performance (speed) 
+vs functional correctness/error checking.
+
+4. Another thing we noticed was that we may have some unnecessary pointer 
+dereferences. Looking at the assembly code we noticed how many instructions 
+it actually takes to dereference a pointer and load it into registers from 
+memory. Doing these dereferences even just twice on the same pointer might 
+be worth it to dereference it once and store it in a temporary variable 
+and then access that.
+
+Otherwise, after looking at the assembly code, we don’t really see any 
+big/wasteful lines of code except for perhaps what was mentioned above. 
+We tried to optimize as much as we could, and it seems like we did a good 
+job for the most part. One thing we would perhaps change would be that we 
+would store more variables in registers instead of passing a bunch of 
+things and dereferencing. 
+-------------------------------------------------------------------------

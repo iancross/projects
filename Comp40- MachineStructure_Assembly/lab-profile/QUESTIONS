@@ -1,0 +1,55 @@
+Emmett Moore and more importantly Ian Cross
+
+With luck you will have access to two sets
+of image rotators.  
+
+
+About Image Rotation 1:
+
+NOTE: Neither of us had access to our previous image rotation files (on 
+the other partner's computer) and we weren't able to do this part. However,
+we read each question and discussed how we would go about this. 
+Additionally, we felt comfortable answering the unblackedges questions at
+the bottom.
+
+  - For a 180-degree fast rotation, what fraction of instructions are
+    spent in input and output and what fraction in rotation?
+  - For a 180-degree *blocked* rotation (if you have one), what
+    fraction of instructions are spent in input and output and what
+    fraction in rotation?
+
+About Image Rotation 2:
+  - For a 180-degree fast rotation, what fraction of instructions are
+    spent in input and output and what fraction in rotation?
+  - For a 180-degree *blocked* rotation (if you have one), what
+    fraction of instructions are spent in input and output and what
+    fraction in rotation?
+
+
+UNBLACKEDGES
+
+Please put answers to questions here.
+
+
+  - What fraction of time is spent in I/O as compared with removing
+    black edges? 
+        Answer: 59.5%
+  
+  - How long does time ./unblack-edges take?
+        Answer: 1.78 seconds
+  
+  - After making changes requested in the lab handout (steps 1-4), what
+    happened to the total time?
+        Answer: The new total time was 2.24 seconds which is .46 seconds 
+        slower than the depth first search.
+  
+  - What happened to the fraction of time spent in Bit_put?
+        Answer: Initial DFS = 8.58%    Revised BFS = 8.61%
+                the fraction of time increased by .03%
+  
+  - Since the implementation of Bit_put has not been improved, what has
+    changed?
+        Answer: The major change was the change from seq_addlo to seq_addhi.
+                Seq_addlo was 2.64% and then seq_addhi was 2.31%. This is
+                a change of approx 20 million instructions.  
+  

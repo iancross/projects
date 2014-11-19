@@ -1,0 +1,29 @@
+#include "uarray2b.h"
+#include <stdio.h>
+
+void print(int i, int j, UArray2b_T array2b, void *elem, void *cl);
+
+int main()
+{
+    int *index;
+    //int k = 0;
+    printf("test\n");
+    UArray2b_T array = UArray2b_new(5, 4, sizeof(int), 2);
+    index = UArray2b_at(array, 0, 0);
+    fprintf(stderr, "%s %i", "0,0 =", *index);
+    /*  for(int i = 0; i< 4; i++){
+   	for(int j = 0; j < 5; j++){
+	    index = UArray2b_at(array, j, i);
+	    *index = k;
+	    k++;
+	}
+	} */
+    //UArray2b_map(array, print, NULL);
+}
+void print(int i, int j, UArray2b_T array2b, void *elem, void *cl) 
+{
+    (void)array2b;
+    (void)cl;
+    int *e = elem;
+    printf("%s %i,%i %s %i\n", "At location", i, j, "Value is: ", *e);
+}

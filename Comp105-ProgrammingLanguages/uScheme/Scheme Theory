@@ -1,0 +1,17 @@
+---------------------------------------------------------
+30. Prove that (length(reverse xs)) = (length xs)
+
+
+base case that xs is nil:
+
+(length (reverse '()))
+	= { substitute actual parameter in definition of length}
+(length
+(if (null? '())
+	'()
+	(append (simple-reverse (cdr '())(list1 (car '())))))
+	= { null?- empty rule }
+(if #t
+	(length xs)
+
+

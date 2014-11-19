@@ -1,0 +1,70 @@
+               COMP 40 Lab: Naming brightness functions
+                             (for pairs)
+
+                          September 7, 2012
+
+Partner's names:
+Ian Cross and Alison Tai
+
+
+This file goes with part 7 of the first lab.  The idea is to give you
+some practice thinking about the names of functions.  The problem is a
+simple one, so we're going the software equivalent of shooting a fly
+with an elephant gun, but because the problem is so simple, it makes
+it easy to have a short practice session.
+
+Here is the problem:
+
+  - Suggest three different functions that might be useful in
+    implementing `brightness`.
+
+  - For each function, suggest three possible names.
+
+  - For each function, say which name you think is most appropriate
+    and *why*.
+
+
+
+Function #1:
+
+  Job: Finds the sum of the brightness of all of the pixels.
+
+  Candidate names: FindSum, BrightnessSum, BrightSum, PixBright, PixSum
+
+  Best name: BrightSum
+
+  Why the given name is the best: It gives an idea of the purpose of the 
+function because it says that it is finding the sum of Brightness of pixels.
+
+
+
+
+
+Function #2:
+
+  Job:Finds the brightness of a specific pixel
+
+  Candidate names:PixBright, BrightPix, FindBright
+
+  Best name:PixBright
+
+  Why the given name is the best:PixBright sets it apart from BrightSum 
+because it says that you are checking the brightness of each pixel.
+
+
+
+
+
+Function #3:
+
+  Job:Gets the average brightness of the image
+
+  Candidate names:AvgBrightness, AvgBright, ImageBright
+
+  Best name:AvgBright
+
+  Why the given name is the best:Says that we are calculating the average 
+brightness of the image.
+
+
+

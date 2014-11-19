@@ -1,0 +1,56 @@
+Homework 1 Solution
+by Ian Cross and Alison Tai
+
+---------------------
+Acknowledgements
+---------------------
+We received some assistance with syntax from TAs: Eliot, Zeke, and Will.
+We also looked at the Wikipedia page for message digests to get ideas
+for Part C.
+
+---------------------
+Implementations
+---------------------
+brightness.c calculates the average brightness of a PGM file. This was
+correctly implemented through the functions: 
+        CheckFile 
+        AvgBright 
+        SumBright
+and using the following interface:
+        pnmrdr - to read and attain necessary data of the PGM file.
+
+fgroups.c calculates [description]. This was correctly implemented through the functions:
+        input, 
+        insert_atom,
+        print_table, 
+        print_set, 
+        skip_line, 
+        record_fingerprint, 
+        record_name, 
+        num_fgroups
+and using the following interfaces:
+        table - to store the fingerprints and names
+        set - to store the fingerprint groups of names
+        atom - to store keys and values in the table and sets.
+
+----------------------
+Part C
+----------------------
+Fingerprint implementation examples:
+
+1. Dictionary - printing word definitions (or simply printing every
+   word's definition)
+2. Mass data retrieval - with a slight modification, you could use a 
+   keyword to find article, speech, or blog segments that have to do with
+   a particular keyword. This could be especially important in terms of 
+   national security. For example, put all blocks of text in a set that
+   have the fingerprint "making bombs."
+3. Verifying the integrity of files or messages - As indicated in the
+   assignment, the fingerprint can also be considered a message digest. 
+   One can determine if any changes have been made to a message by 
+   comparing message digests calculated before and after the message was
+   sent. 
+
+----------------------
+Hours Spent: ~14 hrs
+----------------------

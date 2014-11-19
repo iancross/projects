@@ -1,0 +1,149 @@
+HW3 Solution by Dan Defossez and Ian Cross
+2/15/2012
+
+Giving credit where credit is due:
+        Noah helped us a couple of nights and we discussed methods of copying 
+        pixel structs (using pointers or memcpy). Which we decided to use 
+        memcpy.
+        
+        Arthur (student) helped us figure out our printing methods in Ppmtrans.
+
+        Tony (TA) helped us eliminate some questions that we had about apply 
+        functions and structs. Specifically, we were wondering if we even 
+        needed to use structs to resolve differences in our apply functions 
+        versus the ones in A2 methods. Since the parameters of our apply 
+        functions basically matched the apply functions in A2, we decided it 
+        would be unnecessary to resolve non-existant differences. Tony assured
+        us that our design was acceptable.
+
+------------------------------------------------------------------------------
+Correctly Implemented Parts:
+        All Uarray2b (and Uarray2) functions work and have been implemented 
+        correctly.  Additionally, we have correctly implemented the a2plain
+        method suite. Finally, using these files, the ppmtrans program which 
+        handles the actual image manipulation has correctly implemented all 
+        required functions/options as well as the following:
+                1.Rotate 0
+                2.Rotate 270
+                3.Transpose
+
+Program aspects that have not been implemented:
+        We have chosen not to implement:
+                1. Flip horizontal
+                2. Flip vertical
+                3. Additionally, we didn't implement a closure to handle 
+                difference in apply functions (as mentioned above)
+
+------------------------------------------------------------------------------
+Solution Architecture:
+
+Part A:
+        We represented a 2D array of elements using a UArray2 (shell) of
+UArray2s. The inner UArray2s are blocks of elements that are contiguous in
+memory. So basically, we have a UArray2 of blocks of elements.      
+
+To go from a client's coordinate to our pointer, we use the 
+following conversion:
+        (starting at index (0, 0) for all arrays)
+        To get block: (col/blocksize, row/blocksize) [integer division]
+        To get (local) elem in block: (col%blocksize, row%blocksize)
+
+Part B:
+        Part B involved designing/implementing an interface for manipulating 
+UArray2s. This method suite holds all of the function pointers that are used 
+by ppmtrans or any program to call functions in UArray2. When used in 
+conjunction with a2blocked, the client can call any UArray2b function or 
+UArray2 function generically.
+
+We used the a2blocked.c heavily as a model to create our own suite. a2plain
+struct doesn't include any of the blocked manipulation functions and includes
+additional UArray2-specific functions (map-col-major, map-row-major, etc.)
+
+Part C:
+        This is where our program interacts with the client and uses the 
+method suites to manipulate/transform images. 
+        1. The code provided for us in ppmtrans handles command-line args
+        and method suite types.
+        2. Once the user args have been taken in, we load the image using 
+        ppm reader and the appropriate methods from the method suite. 
+        3. Then, we actually transform the image pixel by pixel and put the 
+        resulting image in a new A2 struct to be printed.
+        4. We take the existing Pnm_ppm struct and point its member array to 
+        the transformed array.
+        5. Then we use Pnm_ppmwrite to print the image to stdout.
+
+-----------------------------------------------------------------------------
+Part E
+
+NOTE: To test the run times, we are using mobo.jpg from /comp/40/images/large 
+        and scaling it 1.5 using pnmscale. Also, we are using sunfire32.
+
+      Also, we tested each rotation method 3 times to check variation.
+
+                                           Run-time in seconds
+
+                        row-major (s)     column-major (s)   blocked access (s)
+90-Degree Rotation      53.43            53.71              48.97
+                        56.18            54.41              48.84
+                        59.02            54.83              51.10
+
+180 Degree Rotation     31.36            1:07.20            49.99
+                        32.30            1:09.73            49.08
+                        32.46            1:10.28            47.34
+
+
+
+Though these values are not consistent with our predictions, upon further
+reflection, they make perfect sense. In our predictions, we didn't really 
+consider how degree of rotation and the storing of the rotated image in the 
+other array affect cache performance.  
+
+90 Degrees:
+
+The fastest method of 90 degree rotation is blocked access, due to its cache
+behavior.  In a block major iteration, the cache performance is independent of
+the rotation/orientation of the two arrays.  No matter what, blocks will be
+preserved.  Reading and writing from the original and rotated arrays, 
+respectively, will give you an equally high number of cache hits.
+
+Row and column-major have roughly the same performance because in either 
+method, one of the steps (either reading or writing) will be poor performance,
+while the other will be good.  This is because, when reading in row-major from 
+the original array, there will be mainly cache hits.  However, when writing to
+the rotated array, there will be mainly cache misses, because it writes in a 
+column major fashion.  The opposite is true for column-major.  It has poor
+cache performance while reading, and good performance while writing. 
+
+NOTE: Row major iteration produces good cache performance because our 
+implementation of UArray2 is simply a long UArray of concatenated rows.
+
+180 Degrees:
+
+Row major performs very well in this situation, for the simple reason that 
+both reads and writes are mostly cache hits.  While reading from column 0 to 
+column (width-1) in the source, there are mainly hits.  While writing from 
+column (width-1) to column 0 in the transformed array, again there will be 
+mainly hits.  
+
+Blocked has roughly the same performance as in 90 degrees for the same reasons
+as above. It reads from the source block by block, and copies to the 
+transformed array block by block, as well. This results in good cache 
+performance, approximately the same as in 90 degrees.  Though there are mainly 
+cache hits for both the reading and writing operations, block major performs
+worse than row major, because it requires many more math operations than row
+major does.
+
+Column major performs poorly in this case, because both the reads from the 
+source, and writes to the transformed array are mostly cache misses. This is
+because both operations go in a column-major fashion, and column major will
+always perform badly on a row-major implementation of a 2d array. 
+
+An interesting thing to note is that even though block-major did many more
+math/comparison operations than column major, it performed better because of
+it's locality.  
+
+-----------------------------------------------------------------------------
+
+We worked ~30 hours on this project.
+
+

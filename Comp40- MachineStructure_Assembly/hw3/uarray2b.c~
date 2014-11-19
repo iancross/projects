@@ -1,0 +1,172 @@
+/*
+ * uarray2b.c
+ * Ian Cross and Dan Defossez
+ * 2/8/2013
+ * Implementation of 2D blocked array
+ */
+#include "uarray2b.h"
+#include "uarray2.h"
+#include "mem.h"
+#include "assert.h"
+#include <math.h>
+#include <stdio.h>
+
+/*Note: i is column and j is row*/
+
+#define T UArray2b_T
+#define CACHESIZE 65536
+
+int block_dim(int length, int blocksize);
+void make_arrs(int col, int row, void *val, void *cl);
+T initialize_arr(int width, int height, int size, int blocksize);
+void block_iter(UArray2b_T array2b, int i, int j, 
+		void apply(int i, int j, T array2b, void *elem, void *cl),
+		void *cl);
+
+struct T {
+	int height, width, size, blocksize; 
+	UArray2_T arr;
+};
+
+struct element_size {
+	int size;
+	int blocksize;
+};
+
+
+T UArray2b_new (int width, int height, int size, int blocksize)
+{
+	return initialize_arr(width, height, size, blocksize);
+}
+
+T UArray2b_new_64K_block(int width, int height, int size)
+{
+	int blocksize;
+	blocksize = (int)sqrt(CACHESIZE/size);
+	return initialize_arr(width, height, size, blocksize);
+}
+
+void UArray2b_free(T *array2b);
+
+int UArray2b_width (T array2b)
+{
+	assert(array2b);
+	return array2b->width;
+}
+int UArray2b_height(T array2b)
+{
+	assert(array2b);
+	return array2b->height;
+}
+int UArray2b_size (T array2b)
+{
+	assert(array2b);
+	return array2b->size;
+}
+int UArray2b_blocksize(T array2b)
+{
+	assert(array2b);
+	return array2b->blocksize;
+}
+void *UArray2b_at(T array2b, int i, int j)
+{
+	assert(array2b);
+	int x1, y1, x2, y2;
+	UArray2_T inner;
+	x1 = i / array2b->blocksize;
+	y1 = j / array2b->blocksize;
+	x2 = i % array2b->blocksize;
+	y2 = j % array2b->blocksize;
+	printf("%s %i %i %i %i\n", "2bat", x1, y1, x2, y2);
+	inner = UArray2_at(array2b->arr, x1, y1); //pointer to the block
+	fprintf(stderr, "%s %i", "inner area = ", UArray2_area(inner));
+	return UArray2_at(inner, x2, y2);
+}
+
+void UArray2b_map(T array2b, void apply(int i, int j, T array2b,
+					void *elem, void *cl), void *cl)
+{
+	assert(array2b);
+	int row, col;
+	int w = array2b->width;
+	int h = array2b->height;
+	int bs = array2b->blocksize;
+	for (row = 0; row < block_dim(h, bs); row++){
+		for(col = 0; col < block_dim(w, bs); col++){
+			/*now iterate through each block*/
+			block_iter(array2b, col, row, apply, cl);
+		}
+	}
+}	
+int block_dim(int length, int blocksize)
+{
+	if (blocksize >= length) {
+		return 1;
+	}
+	if (length % blocksize == 0){
+		return length/blocksize;
+	}else {
+		return length/blocksize + 1;
+	}
+}
+
+void make_arrs(int col, int row, void *val, void *cl)
+{
+	(void) col;
+	(void) row;
+	int *p;
+	struct element_size *e_s = cl;
+	val = UArray2_new(e_s->blocksize, e_s->blocksize, e_s->size);
+	p = UArray2_at(val, 0, 0);
+	*p = 1;
+	fprintf(stderr, "%s %i\n", "p =", *(int*)UArray2_at(val, 0, 0));
+}
+
+T initialize_arr(int width, int height, int size, int blocksize)
+{
+	T newArr;
+	int i, j;
+	UArray2_T inner;
+	NEW(newArr); //super shell
+	newArr->height = height;
+	newArr->width = width;
+	newArr->size = size;
+	newArr->blocksize = blocksize;
+
+	width = block_dim(width, blocksize);
+	height = block_dim(height, blocksize);
+	newArr->arr = UArray2_new(width, height, sizeof(UArray2_T));
+        /* uarray2 of uarray2s, for blocks */
+
+	struct element_size es;
+	es.size = size;
+	es.blocksize = blocksize;
+	//UArray2_map_row_major(newArr->arr, make_arrs, &es);
+	for(j = 0; j < height; j++){
+		for(i = 0; i < width; i++){
+			inner = UArray2_at(newArr->arr, i, j);
+			inner = UArray2_new(blocksize, blocksize, size);
+		}
+	}
+	return newArr;
+}
+
+void block_iter(UArray2b_T array2b, int i, int j, 
+		void apply(int i, int j, T array2b, void *elem, void *cl),
+		void *cl)
+{
+	void* elem;
+	int client_x, client_y, col, row, bs = array2b->blocksize;
+	for (row = 0; row < bs; row++) {
+		for (col = 0; col < bs; col++) {
+			client_x = i*bs + col;	/*coordinates of client*/
+			client_y = j*bs + row;
+			elem = UArray2b_at(array2b, client_x, client_y);
+			if(client_x < array2b->width &&
+			   client_y < array2b->height){
+				apply(client_x, client_y, array2b, elem, cl);
+			}
+		}
+	}
+	
+}

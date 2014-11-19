@@ -1,0 +1,64 @@
+;-----PRIME
+;Determines if an int n is prime. Ret 1 if yes, otherwise returns 0
+;returns 0 on bad input
+(define prime? (n)
+	(if (< n 2)
+		0 						
+	(recur_prime n (/ n 2)))
+)		
+;recursive function that does the calculations for prime?
+;returns 1 if prime and 0 if not.
+(define recur_prime (n iter) 
+	(if (= iter 1)
+		1
+	(else n iter))
+) 
+(define else (n iter)
+	(if (= (mod n iter) 0)
+		0
+	(recur_prime n (- iter 1)))
+)
+
+;-----NTHPRIME
+;returns the nth prime number
+;if bad input, return -1
+(define nthprime (n)
+	(if (< n 1)
+		-1
+	(recurs_nthprime n 2))
+)
+;calculates and returns the nth prime number recursively
+(define recurs_nthprime (n iter)
+	(if (and (< n 2) (prime? iter))
+		iter
+	(else_nthprime n iter))
+)
+(define else_nthprime (n iter)
+	(if (prime? iter)
+	(recurs_nthprime (- n 1) (+ iter 1))
+	(recurs_nthprime n (+ iter 1)))
+)
+
+;-----SUMPRIME
+;returns the sum of the first n prime numbers
+;returns n if bad input
+(define sumprimes (n)
+	(if (<= n 0)
+	0
+	(+ (nthprime n) (sumprimes (- n 1))))
+)
+
+;------RELPRIME
+;returns 1 if m and n are relatively prime, else, return 0
+(define relprime (m n)
+	(if (= (gcd m n) 1)
+	1
+	0)
+)
+
+;finds the greatest common denominator of two ints (from Ramsey)
+(define gcd (m n)
+	(if (= n 0)
+	m
+	(gcd n (mod m n)))
+)

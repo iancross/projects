@@ -1,0 +1,29 @@
+;returns m^n. There was no need to check for error cases becuase
+;this is called by binary (m) which already checks the input
+;this is basically a redefinition of exp (from ex4.ic) and it was 
+;added in case the files are run independently of each other.
+(define exp_for_binary (m n) 
+	(if (< n 1)
+		 1 
+	(* m (exp_for_binary m (- n 1))))
+)
+
+;returns and decimal n in binary form. negative and positive cases are handled
+(define binary (n)
+	(if (< n 0)
+		(- 0 (recur_binary n 0))
+	(recur_binary n 0))
+)
+;this function does the recursive calculation for binary
+(define recur_binary (n power)
+	(if (= n 0)
+		0
+	(else n power))
+)
+;this function is called if recur_binary hasn't reached the base case and
+;more iterations are needed. returns 0 or the current power of 10
+(define else (n power)
+	(if (= (mod n 2) 0)
+		(recur_binary (/ n 2) (+ power 1))
+	(+ (exp_for_binary 10 power) (recur_binary (/ n 2) (+ power 1))))
+)

@@ -1,0 +1,25 @@
+Homework 1 - Fgroups Design 
+Ian Cross and Alison Tai
+
+1. Data Structures - What does each pointer-to-void point to?
+We are using Hanson's table to hold the fingerprints (key) and the 
+corresponding names (values). The void pointer keys are pointing to atoms which
+hold the fingerprints string sequence. The void pointer values in the table 
+point to sets of the names in the fingerprint group.
+
+2. What invariant holds part way through reading input lines?
+One invariant will be that it's not the end of the input (or end of file).
+There will be several other tests to check for bad input during this loop, for
+example, making sure the fingerprint is of correct size, value appears more 
+than once, etc.
+
+3. How will you compute fingerprint groups after input is read?
+During the input loop, if the fingerprint is not in the table, the 
+fingerprint is added and value is added as a 1 element set. If the fingerprint
+is in the table and the value is not already in the set, we add the value to
+the corresponding set. If the fingerprint is in the table and also the name is 
+in the corresponding value set, we just move on to the next input. 
+
+Once the entire file is input or the user is done inputting, the set of each key
+with a set of size greater than 1 is printed as a fingerprint group.
+

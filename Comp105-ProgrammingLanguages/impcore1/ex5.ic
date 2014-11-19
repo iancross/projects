@@ -1,0 +1,23 @@
+;Ian Cross
+
+;takes in integer n and returns n! (factorial)
+;if bad input, return -1
+(define fact (n)
+	(if (< n 0)		;check that n is nonnegative
+	-1
+	(recur_fact n))
+)
+(define recur_fact (n)
+	(if (= n 0)
+	 1 
+	(* n (recur_fact (- n 1))))
+)
+
+;finds all possible permutations of n choose k. returns 0 if bad input
+(define choose (n k) 
+	(if (< n k) 
+	 0
+	(/ (fact n)(* (fact k) (fact(- n k)))))
+)
+
+

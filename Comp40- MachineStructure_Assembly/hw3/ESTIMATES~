@@ -1,0 +1,117 @@
+Ian Cross and Dan Defossez
+Part D - Analysis of Locality and Predicting Performance.
+------------------------------------------------------------------------------
+			row-major	column-major	  blocked access
+90-Degree Rotation	1		5		  1
+
+180 Degree Rotation	1		5		  1
+
+-Blocked Access - This method of mapping only misses when it gets to the end
+of one of our predefined blocks. This is under the assumption that the blocks 
+ are small enough to fit in the cache.
+
+-Row-major - We believe that this method is the same as blocked access because
+our implementation of a UArray2 uses a single UArray which is contiguous 
+memory with respect to elements in a row. Therefore, it will only miss when 
+the cache is full and has to go to the next one.
+
+-Column-major - Column major is the worst because elements in a column are not
+next to each other in memory. Also, we are under the assumption that the image
+is too large to fit in the cache.
+
+In these three methods, 90 degree rotation has the same cache-hit rate as 180 
+because the only difference is the method of modifying coordinates to their 
+rotated image location.
+-----------------------------------------------------------------------------
+
+
+Row-major algorithm:
+1. addition and sub = 2
+2. multiplication =  1
+3. 1 division and 1 modulus
+4. 1
+5. In row-major order, the cache is filled with elements that are adjacent in
+memory. This means that there will only be a load when the element you are 
+looking for is not in the cache. In this case, there would be a load every 
+(# of elements that fit in the cache) 
+6. (# of pixels that fit in cache - 1) / # of pixels that fit in cache 
+7. The number of stores depends on the writing policy of the cache: 
+write through or write back. We will assume it is a write through. Under this
+assumption, there will be 1 store per pixel.
+8. Based on the previous assumption, all writes will be misses because it will
+have to access memory each time.
+
+Col-major algorithm:
+1. addition and sub = 3
+2. multiplication =  1
+3. 0
+4. 2
+5. In col-major order, the cache is filled with elements that are adjacent in
+memory. However, in our array implementation, elements in the same column are
+not next to each other in memory. This means that every element that is 
+accessed requires a new load into the cache. 
+6. Assuming a row in the array holds more elements than can fit in the cache, 
+all loads will be misses. 
+7. The number of stores depends on the writing policy of the cache: 
+write through or write back. We will assume it is a write through. Under this
+assumption, there will be 1 store per pixel.
+8. Based on the previous assumption, all writes will be misses because it will
+have to access memory each time.
+
+block-major algorithm:
+1. addition and sub = 10
+2. multiplication = 4 
+3. 8
+4. 10
+5. In block-major order, the cache is filled with elements that are adjacent
+in memory, which are also in the same block. This means that there will only 
+be a load when the element you are looking for is not in the cache. In this 
+case, there would be a load every (# of elements that fit in the cache).
+6. (# of pixels that fit in cache - 1) / # of pixels that fit in cache 
+7. The number of stores depends on the writing policy of the cache: 
+write through or write back. We will assume it is a write through. Under this
+assumption, there will be 1 store per pixel.
+8. Based on the previous assumption, all writes will be misses because it will
+have to access memory each time.
+
+
+                   +-   *   /%   <>  loads  hitrate  stores  hitrate
+180 deg row-maj    6    1   2     1    
+----------------------|--|-----|----|-----|---------|-------|--------
+180 deg col-maj    7    1   0     2
+----------------------|--|-----|----|-----|---------|-------|--------
+180 deg block-maj  14   4   8    10  
+----------------------|--|-----|----|-----|---------|-------|--------
+90 deg row-maj     4    1   2     1
+----------------------|--|-----|----|-----|---------|-------|--------
+90 deg col-maj     5    1   0     2
+----------------------|--|-----|----|-----|---------|-------|--------
+90 deg block-maj   12   4   8    10
+----------------------|--|-----|----|-----|---------|-------|--------
+
+NOTE: Addition/subtraction estimates are different than estimated above.  This
+is due to the fact that converting pixel coordinates requires 2 additional
+add/subtract operations for 90 degree rotation, and 4 additional 
+operations for 180 degree rotation.
+
+Also, for loads, stores, and their respective hit rates, see above.
+
+
+			row-major	column-major	  blocked access
+90-Degree Rotation	1		5		  3
+
+180 Degree Rotation	2		6		  4
+
+Our thinking goes as follows: 
+
+Row major requires the least number of operations and essentially acts in 
+blocks anyways, due to our implementation of UArray2. Block major works as
+well as row-major with regards to the cache, but requires many more operations
+so it will take a marginally longer amount of time.  Column major works poorly
+with the cache but makes relatively few operations, so it is the slowest.
+
+According to our write-through assumption, stores are approx. the same for
+each algorithm.
+s
+
+

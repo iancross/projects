@@ -1,0 +1,110 @@
+README - Universal Machine 
+Ian Cross and Emmett Moore
+4/6/13
+
+-------------------------------------------------------------------------
+Giving credit where credit is due: 
+        thanks to the comp40 TAs - Bach, Uncle Tony, Zeke, James.
+
+-------------------------------------------------------------------------
+All functions have been correctly implemented, and we have successfully 
+created a Universal Turing Machine. 
+
+-------------------------------------------------------------------------
+Major departures from our Design:
+
+1. Instead of doing all register manipulation in UnivM_T (which we had 
+planned to do), we passed the register arrays into the segMem interface 
+along with the register #s (not register values).
+        a. (the register array is also now held in the Univm_T struct)
+
+2. Instead of just having a for loop that is the size of the number
+of instructions inserted, we have while loop that iterates through seg0
+and a program counter that is stored in UnivM_T struct.
+
+3.The program halts only when the instruction halt is called. Otherwise, 
+the program goes out of bounds and seg faults.
+
+-------------------------------------------------------------------------
+Basic Architecture:
+
+Our main() deals with 3 layers of abstraction. main() itself will only
+handle initializing the machine and then loops through the instructions
+(segment 0). This then sends the instruction to our UnivM interface which 
+handles all of the instructions. For 10 of these instructions, the
+instruction handler function in the UnivM interface will call static 
+functions that carry out the specified function. The other 4 instructions
+deal with managing memory segments, which is handled in segMem.h. This 
+interface has 4 functions and no data--it expects that the instruction is
+already analyzed, and it takes in the memory sequence and register array.
+Therefore, much of the heavy lifting of this interface is done in univm.h
+as opposed to in segMem.h. univm.h will use bitpack.h to unpack the
+instructions (i.e. determine the opcode and register indices). It then
+calls one of the 14 possible operations. The four instructions that deal
+with memory (map, unmap, seg load and seg store) will also be directly
+called in our switch statement using segMem. The other 10 will have 
+static functions called in the switch statement. Once these functions are
+run, they will put values back into the registers specified by the
+instruction. Again, most of the heavy lifting is done by the univm.h.
+
+------------------------------------------------------------------------
+Speed Test:
+
+In midmark.um 85070521 instructions were executed in 3.88 seconds.
+This means that it takes approx 2.27 seconds per 50 million instructions.
+
+-------------------------------------------------------------------------
+UM unit test explanations:
+
+test_add_and_mult.um
+---this tests addition and multiplication of registers. We load 2 values 
+into registers and add and multiply them by the values of the given 
+registers. it then outputs the values on stdout. 
+
+test_cond_move.um
+---this tests the conditional move instr. we load the letters B-A-D into 
+the registers and after each load, we do a conditional statement that 
+(if cond_move works) should not output those letters. We then load
+G-0-0-D into the registers do conditional move (which if cond_move works)
+should output good.
+
+test_div_and_nand.um
+---this tests the divide and move instructions. we loaded random values
+that when nand-ed and divided by a random number gave a number between
+0-255 and then output that char.
+
+test_halt.um
+---this tests the halt function. we test halt by halting as the initial
+instruction. we know if it doesn't work because BAD is ouput otherwise.
+
+test_input.um
+---this tests the input function. we test input by inputting 4 characters
+and then printing those same characters. note: our test_input.0 contains
+GOOD and the test_input.1 contains GOOD.
+
+test_load_and_output.um
+---this tests load value and output. we test these by loading decimal 
+numbers corresponding the ascii characters G-0-0-D. After each load we 
+print that character and then at the end we halt.
+ 
+test_freed_mem.um
+---this tests the unmap and map functions. It does this by mapping multiple
+segments and then unmapping some. 
+
+test_load_program.um
+---this tests the load program function. This does this by loading the
+instructions into segment 0 and mapping a new segment into segment 1. 
+the instructions in segment 0 are segmented loaded into registers and then
+stored in segment 1. Load program then is called on segment 1 and executes
+the rest of the instructions,
+
+test_map_store_load.um
+---this tests memory allocation: We store the ascii characters of A through
+Z in segment 1 and then output them.
+
+-------------------------------------------------------------------------
+Approximate working times:
+        analyzing design: 2 hours
+        preparing design: 9 hours
+        solving/coding: 10 hours
+
