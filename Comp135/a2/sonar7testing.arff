@@ -1,0 +1,225 @@
+%
+% Note: original labels
+%{ Rock, Mine}
+% changed to -1,1
+% for comp135 assignment
+%
+% NAME: Sonar, Mines vs. Rocks
+% 
+% SUMMARY: This is the data set used by Gorman and Sejnowski in their study
+% of the classification of sonar signals using a neural network [1].  The
+% task is to train a network to discriminate between sonar signals bounced
+% off a metal cylinder and those bounced off a roughly cylindrical rock.
+% 
+% SOURCE: The data set was contributed to the benchmark collection by Terry
+% Sejnowski, now at the Salk Institute and the University of California at
+% San Deigo.  The data set was developed in collaboration with R. Paul
+% Gorman of Allied-Signal Aerospace Technology Center.
+% 
+% MAINTAINER: Scott E. Fahlman
+% 
+% PROBLEM DESCRIPTION:
+% 
+% The file "sonar.mines" contains 111 patterns obtained by bouncing sonar
+% signals off a metal cylinder at various angles and under various
+% conditions.  The file "sonar.rocks" contains 97 patterns obtained from
+% rocks under similar conditions.  The transmitted sonar signal is a
+% frequency-modulated chirp, rising in frequency.  The data set contains
+% signals obtained from a variety of different aspect angles, spanning 90
+% degrees for the cylinder and 180 degrees for the rock.
+% 
+% Each pattern is a set of 60 numbers in the range 0.0 to 1.0.  Each number
+% represents the energy within a particular frequency band, integrated over
+% a certain period of time.  The integration aperture for higher frequencies
+% occur later in time, since these frequencies are transmitted later during
+% the chirp.
+% 
+% The label associated with each record contains the letter "R" if the object
+% is a rock and "M" if it is a mine (metal cylinder).  The numbers in the
+% labels are in increasing order of aspect angle, but they do not encode the
+% angle directly.
+% 
+% METHODOLOGY: 
+% 
+% This data set can be used in a number of different ways to test learning
+% speed, quality of ultimate learning, ability to generalize, or combinations
+% of these factors.
+% 
+% In [1], Gorman and Sejnowski report two series of experiments: an
+% "aspect-angle independent" series, in which the whole data set is used
+% without controlling for aspect angle, and an "aspect-angle dependent"
+% series in which the training and testing sets were carefully controlled to
+% ensure that each set contained cases from each aspect angle in
+% appropriate proportions.
+% 
+% For the aspect-angle independent experiments the combined set of 208 cases
+% is divided randomly into 13 disjoint sets with 16 cases in each.  For each
+% experiment, 12 of these sets are used as training data, while the 13th is
+% reserved for testing.  The experiment is repeated 13 times so that every
+% case appears once as part of a test set.  The reported performance is an
+% average over the entire set of 13 different test sets, each run 10 times.
+% 
+% It was observed that this random division of the sample set led to rather
+% uneven performance.  A few of the splits gave poor results, presumably
+% because the test set contains some samples from aspect angles that are
+% under-represented in the corresponding training set.  This motivated Gorman
+% and Sejnowski to devise a different set of experiments in which an attempt
+% was made to balance the training and test sets so that each would have a
+% representative number of samples from all aspect angles.  Since detailed
+% aspect angle information was not present in the data base of samples, the
+% 208 samples were first divided into clusters, using a 60-dimensional
+% Euclidian metric; each of these clusters was then divided between the
+% 104-member training set and the 104-member test set.  
+% 
+% The actual training and testing samples used for the "aspect angle
+% dependent" experiments are marked in the data files.  The reported
+% performance is an average over 10 runs with this single division of the
+% data set.
+% 
+% A standard back-propagation network was used for all experiments.  The
+% network had 60 inputs and 2 output units, one indicating a cylinder and the
+% other a rock.  Experiments were run with no hidden units (direct
+% connections from each input to each output) and with a single hidden layer
+% with 2, 3, 6, 12, or 24 units.  Each network was trained by 300 epochs over
+% the entire training set.
+% 
+% The weight-update formulas used in this study were slightly different from
+% the standard form.  A learning rate of 2.0 and momentum of 0.0 was used.
+% Errors less than 0.2 were treated as zero.  Initial weights were uniform
+% random values in the range -0.3 to +0.3.
+% 
+% RESULTS: 
+% 
+% For the angle independent experiments, Gorman and Sejnowski report the
+% following results for networks with different numbers of hidden units:
+% 
+% Hidden	% Right on	Std.	% Right on	Std.
+% Units	Training set	Dev.	Test Set	Dev.
+% ------	------------	----	----------	----
+% 0	89.4		2.1	77.1		8.3
+% 2	96.5		0.7	81.9		6.2
+% 3	98.8		0.4	82.0		7.3
+% 6	99.7		0.2	83.5		5.6
+% 12	99.8		0.1	84.7		5.7
+% 24	99.8		0.1	84.5		5.7
+% 
+% For the angle-dependent experiments Gorman and Sejnowski report the
+% following results:
+% 
+% Hidden	% Right on	Std.	% Right on	Std.
+% Units	Training set	Dev.	Test Set	Dev.
+% ------	------------	----	----------	----
+% 0	79.3		3.4	73.1		4.8
+% 2	96.2		2.2	85.7		6.3
+% 3	98.1		1.5	87.6		3.0
+% 6	99.4		0.9	89.3		2.4
+% 12	99.8		0.6	90.4		1.8
+% 24     100.0		0.0	89.2		1.4
+% 
+% Not surprisingly, the network's performance on the test set was somewhat
+% better when the aspect angles in the training and test sets were balanced.
+% 
+% Gorman and Sejnowski further report that a nearest neighbor classifier on
+% the same data gave an 82.7% probability of correct classification.
+% 
+% Three trained human subjects were each tested on 100 signals, chosen at
+% random from the set of 208 returns used to create this data set.  Their
+% responses ranged between 88% and 97% correct.  However, they may have been
+% using information from the raw sonar signal that is not preserved in the
+% processed data sets presented here.
+% 
+% REFERENCES: 
+% 
+% 1. Gorman, R. P., and Sejnowski, T. J. (1988).  "Analysis of Hidden Units
+% in a Layered Network Trained to Classify Sonar Targets" in Neural Networks,
+% Vol. 1, pp. 75-89.
+%
+%
+%
+%
+% Relabeled values in attribute 'Class'
+%    From: R                       To: Rock                
+%    From: M                       To: Mine                
+%
+@relation sonar
+@attribute 'attribute_1' real
+@attribute 'attribute_2' real
+@attribute 'attribute_3' real
+@attribute 'attribute_4' real
+@attribute 'attribute_5' real
+@attribute 'attribute_6' real
+@attribute 'attribute_7' real
+@attribute 'attribute_8' real
+@attribute 'attribute_9' real
+@attribute 'attribute_10' real
+@attribute 'attribute_11' real
+@attribute 'attribute_12' real
+@attribute 'attribute_13' real
+@attribute 'attribute_14' real
+@attribute 'attribute_15' real
+@attribute 'attribute_16' real
+@attribute 'attribute_17' real
+@attribute 'attribute_18' real
+@attribute 'attribute_19' real
+@attribute 'attribute_20' real
+@attribute 'attribute_21' real
+@attribute 'attribute_22' real
+@attribute 'attribute_23' real
+@attribute 'attribute_24' real
+@attribute 'attribute_25' real
+@attribute 'attribute_26' real
+@attribute 'attribute_27' real
+@attribute 'attribute_28' real
+@attribute 'attribute_29' real
+@attribute 'attribute_30' real
+@attribute 'attribute_31' real
+@attribute 'attribute_32' real
+@attribute 'attribute_33' real
+@attribute 'attribute_34' real
+@attribute 'attribute_35' real
+@attribute 'attribute_36' real
+@attribute 'attribute_37' real
+@attribute 'attribute_38' real
+@attribute 'attribute_39' real
+@attribute 'attribute_40' real
+@attribute 'attribute_41' real
+@attribute 'attribute_42' real
+@attribute 'attribute_43' real
+@attribute 'attribute_44' real
+@attribute 'attribute_45' real
+@attribute 'attribute_46' real
+@attribute 'attribute_47' real
+@attribute 'attribute_48' real
+@attribute 'attribute_49' real
+@attribute 'attribute_50' real
+@attribute 'attribute_51' real
+@attribute 'attribute_52' real
+@attribute 'attribute_53' real
+@attribute 'attribute_54' real
+@attribute 'attribute_55' real
+@attribute 'attribute_56' real
+@attribute 'attribute_57' real
+@attribute 'attribute_58' real
+@attribute 'attribute_59' real
+@attribute 'attribute_60' real
+@attribute 'Class' { -1, 1}
+@data
+0.043, 0.0902, 0.0833, 0.0813, 0.0165, 0.0277, 0.0569, 0.2057, 0.3887, 0.7106, 0.7342, 0.5033, 0.3, 0.1951, 0.2767, 0.3737, 0.2507, 0.2507, 0.3292, 0.4871, 0.6527, 0.8454, 0.9739, 1.0, 0.6665, 0.5323, 0.4024, 0.3444, 0.4239, 0.4182, 0.4393, 0.1162, 0.4336, 0.6553, 0.6172, 0.4373, 0.4118, 0.3641, 0.4572, 0.4367, 0.2964, 0.4312, 0.4155, 0.1824, 0.1487, 0.0138, 0.1164, 0.2052, 0.1069, 0.0199, 0.0208, 0.0176, 0.0197, 0.021, 0.0141, 0.0049, 0.0027, 0.0162, 0.0059, 1.0,1
+0.01, 0.0275, 0.019, 0.0371, 0.0416, 0.0201, 0.0314, 0.0651, 0.1896, 0.2668, 0.3376, 0.3282, 0.2432, 0.1268, 0.1278, 0.4441, 0.6795, 0.7051, 0.7966, 0.9401, 0.9857, 0.8193, 0.5789, 0.6394, 0.7043, 0.6875, 0.4081, 0.1811, 0.2064, 0.3917, 0.3791, 0.2042, 0.2227, 0.3341, 0.3984, 0.5077, 0.5534, 0.3352, 0.2723, 0.2278, 0.2044, 0.1986, 0.0835, 0.0908, 0.138, 0.1948, 0.1211, 0.0843, 0.0589, 0.0247, 0.0118, 0.0088, 0.0104, 0.0036, 0.0088, 0.0047, 0.0117, 0.002, 0.0091, 1.0,-1
+0.0084, 0.0153, 0.0291, 0.0432, 0.0951, 0.0752, 0.0414, 0.0259, 0.0692, 0.1753, 0.197, 0.1167, 0.1683, 0.0814, 0.2179, 0.5121, 0.7231, 0.7776, 0.6222, 0.3501, 0.3733, 0.2622, 0.3776, 0.7361, 0.8673, 0.8223, 0.7772, 0.7862, 0.5652, 0.3635, 0.3534, 0.3865, 0.337, 0.1693, 0.2627, 0.3195, 0.1388, 0.1048, 0.1681, 0.191, 0.1174, 0.0933, 0.0856, 0.0951, 0.0986, 0.0956, 0.0426, 0.0407, 0.0106, 0.0179, 0.0056, 0.0236, 0.0114, 0.0136, 0.0117, 0.006, 0.0058, 0.0031, 0.0072, 1.0,-1
+0.0201, 0.0026, 0.0138, 0.0062, 0.0133, 0.0151, 0.0541, 0.021, 0.0505, 0.1097, 0.0841, 0.0942, 0.1204, 0.042, 0.0031, 0.0162, 0.0624, 0.2127, 0.3436, 0.3813, 0.3825, 0.4764, 0.6313, 0.7523, 0.8675, 0.8788, 0.7901, 0.8357, 0.9631, 0.9619, 0.9236, 0.8903, 0.9708, 0.9647, 0.7892, 0.5307, 0.2718, 0.1953, 0.1374, 0.3105, 0.379, 0.4105, 0.3355, 0.2998, 0.2748, 0.2024, 0.1043, 0.0453, 0.0337, 0.0122, 0.0072, 0.0108, 0.007, 0.0063, 0.003, 0.0011, 0.0007, 0.0024, 0.0057, 1.0,-1
+0.0442, 0.0477, 0.0049, 0.0581, 0.0278, 0.0678, 0.1664, 0.149, 0.0974, 0.1268, 0.1109, 0.2375, 0.2007, 0.214, 0.1109, 0.2036, 0.2468, 0.6682, 0.8345, 0.8252, 0.8017, 0.8982, 0.9664, 0.8515, 0.6626, 0.3241, 0.2054, 0.5669, 0.5726, 0.4877, 0.7532, 0.76, 0.5185, 0.412, 0.556, 0.5569, 0.1336, 0.3831, 0.4611, 0.433, 0.2556, 0.1466, 0.3489, 0.2659, 0.0944, 0.137, 0.1344, 0.0416, 0.0719, 0.0637, 0.021, 0.0204, 0.0216, 0.0135, 0.0055, 0.0073, 0.008, 0.0105, 0.0059, 1.0,-1
+0.0151, 0.032, 0.0599, 0.105, 0.1163, 0.1734, 0.1679, 0.1119, 0.0889, 0.1205, 0.0847, 0.1518, 0.2305, 0.2793, 0.3404, 0.4527, 0.695, 0.8807, 0.9154, 0.7542, 0.6736, 0.7146, 0.8335, 0.7701, 0.6993, 0.6543, 0.504, 0.4926, 0.4992, 0.4161, 0.1631, 0.0404, 0.0637, 0.2962, 0.3609, 0.1866, 0.0476, 0.1497, 0.2405, 0.198, 0.3175, 0.2379, 0.1716, 0.1559, 0.1556, 0.0422, 0.0493, 0.0476, 0.0219, 0.0059, 0.0086, 0.0061, 0.0015, 0.0084, 0.0128, 0.0054, 0.0011, 0.0019, 0.0023, 1.0,-1
+0.0443, 0.0446, 0.0235, 0.1008, 0.2252, 0.2611, 0.2061, 0.1668, 0.1801, 0.3083, 0.3794, 0.5364, 0.6173, 0.7842, 0.8392, 0.9016, 1.0, 0.8911, 0.8753, 0.7886, 0.7156, 0.7581, 0.6372, 0.321, 0.2076, 0.2279, 0.3309, 0.2847, 0.1949, 0.1671, 0.1025, 0.1362, 0.2212, 0.1124, 0.1677, 0.1039, 0.2562, 0.2624, 0.2236, 0.118, 0.1103, 0.2831, 0.2385, 0.0255, 0.1967, 0.1483, 0.0434, 0.0627, 0.0513, 0.0473, 0.0248, 0.0274, 0.0205, 0.0141, 0.0185, 0.0055, 0.0045, 0.0115, 0.0152, 1.0,1
+0.115, 0.1163, 0.0866, 0.0358, 0.0232, 0.1267, 0.2417, 0.2661, 0.4346, 0.5378, 0.3816, 0.0991, 0.0616, 0.1795, 0.3907, 0.3602, 0.3041, 0.2428, 0.406, 0.8395, 0.9777, 0.468, 0.061, 0.2143, 0.1348, 0.2854, 0.1617, 0.2649, 0.4565, 0.6502, 0.2848, 0.3296, 0.537, 0.6627, 0.8626, 0.8547, 0.7848, 0.9016, 0.8827, 0.6086, 0.281, 0.0906, 0.1177, 0.2694, 0.5214, 0.4232, 0.234, 0.1928, 0.1092, 0.0507, 0.0228, 0.0099, 0.0065, 0.0085, 0.0166, 0.011, 0.019, 0.0141, 0.0068, 1.0,1
+0.0374, 0.0586, 0.0628, 0.0534, 0.0255, 0.1422, 0.2072, 0.2734, 0.307, 0.2597, 0.3483, 0.3999, 0.4574, 0.595, 0.7924, 0.8272, 0.8087, 0.8977, 0.9828, 0.8982, 0.889, 0.9367, 0.9122, 0.7936, 0.6718, 0.6318, 0.4865, 0.3388, 0.4832, 0.3822, 0.3075, 0.1267, 0.0743, 0.151, 0.1906, 0.1817, 0.1709, 0.0946, 0.2829, 0.3006, 0.1602, 0.1483, 0.2875, 0.2047, 0.1064, 0.1395, 0.1065, 0.0527, 0.0395, 0.0183, 0.0353, 0.0118, 0.0063, 0.0237, 0.0032, 0.0087, 0.0124, 0.0113, 0.0098, 1.0,1
+0.0177, 0.03, 0.0288, 0.0394, 0.063, 0.0526, 0.0688, 0.0633, 0.0624, 0.0613, 0.168, 0.3476, 0.4561, 0.5188, 0.6308, 0.7201, 0.5153, 0.3818, 0.2644, 0.3345, 0.4865, 0.6628, 0.7389, 0.9213, 1.0, 0.775, 0.5593, 0.6172, 0.8635, 0.6592, 0.477, 0.4983, 0.333, 0.3076, 0.2876, 0.2226, 0.0794, 0.0603, 0.1049, 0.0606, 0.153, 0.0983, 0.1643, 0.1901, 0.1107, 0.1917, 0.1467, 0.0392, 0.0356, 0.027, 0.0168, 0.0102, 0.0122, 0.0044, 0.0075, 0.0124, 0.0099, 0.0057, 0.0032, 1.0,-1
+0.1088, 0.1278, 0.0926, 0.1234, 0.1276, 0.1731, 0.1948, 0.4262, 0.6828, 0.5761, 0.4733, 0.2362, 0.1023, 0.2904, 0.4713, 0.4659, 0.1415, 0.0849, 0.3257, 0.9007, 0.9312, 0.4856, 0.1346, 0.1604, 0.2737, 0.5609, 0.3654, 0.6139, 0.547, 0.8474, 0.5638, 0.5443, 0.5086, 0.6253, 0.8497, 0.8406, 0.842, 0.9136, 0.7713, 0.4882, 0.3724, 0.4469, 0.4586, 0.4491, 0.5616, 0.4305, 0.0945, 0.0794, 0.0274, 0.0154, 0.014, 0.0455, 0.0213, 0.0082, 0.0124, 0.0167, 0.0103, 0.0205, 0.0178, 1.0,1
+0.0968, 0.0821, 0.0629, 0.0608, 0.0617, 0.1207, 0.0944, 0.4223, 0.5744, 0.5025, 0.3488, 0.17, 0.2076, 0.3087, 0.4224, 0.5312, 0.2436, 0.1884, 0.1908, 0.8321, 1.0, 0.4076, 0.096, 0.1928, 0.2419, 0.379, 0.2893, 0.3451, 0.3777, 0.5213, 0.2316, 0.3335, 0.4781, 0.6116, 0.6705, 0.7375, 0.7356, 0.7792, 0.6788, 0.5259, 0.2762, 0.1545, 0.2019, 0.2231, 0.4221, 0.3067, 0.1329, 0.1349, 0.1057, 0.0499, 0.0206, 0.0073, 0.0081, 0.0303, 0.019, 0.0212, 0.0126, 0.0201, 0.021, 1.0,1
+0.0195, 0.0213, 0.0058, 0.019, 0.0319, 0.0571, 0.1004, 0.0668, 0.0691, 0.0242, 0.0728, 0.0639, 0.3002, 0.3854, 0.4767, 0.4602, 0.3175, 0.416, 0.6428, 1.0, 0.8631, 0.5212, 0.3156, 0.5952, 0.7732, 0.6042, 0.4375, 0.5487, 0.472, 0.6235, 0.3851, 0.159, 0.3891, 0.5294, 0.3504, 0.448, 0.4041, 0.5031, 0.6475, 0.5493, 0.3548, 0.2028, 0.1882, 0.0845, 0.1315, 0.159, 0.0562, 0.0617, 0.0343, 0.037, 0.0261, 0.0157, 0.0074, 0.0271, 0.0203, 0.0089, 0.0095, 0.0095, 0.0021, 1.0,-1
+0.079, 0.0707, 0.0352, 0.166, 0.133, 0.0226, 0.0771, 0.2678, 0.5664, 0.6609, 0.5002, 0.2583, 0.165, 0.4347, 0.4515, 0.4579, 0.3366, 0.4, 0.5325, 0.901, 0.9939, 0.3689, 0.1012, 0.0248, 0.2318, 0.3981, 0.2259, 0.5247, 0.6898, 0.8316, 0.4326, 0.3741, 0.5756, 0.8043, 0.7963, 0.7174, 0.7056, 0.8148, 0.7601, 0.6034, 0.4554, 0.4729, 0.4478, 0.3722, 0.4693, 0.3839, 0.0768, 0.1467, 0.0777, 0.0469, 0.0193, 0.0298, 0.039, 0.0294, 0.0175, 0.0249, 0.0141, 0.0073, 0.0025, 1.0,1
+0.0189, 0.0308, 0.0197, 0.0622, 0.008, 0.0789, 0.144, 0.1451, 0.1789, 0.2522, 0.2607, 0.371, 0.3906, 0.2672, 0.2716, 0.4183, 0.6988, 0.5733, 0.2226, 0.2631, 0.7473, 0.7263, 0.3393, 0.2824, 0.6053, 0.5897, 0.4967, 0.8616, 0.8339, 0.4084, 0.2268, 0.1745, 0.0507, 0.1588, 0.304, 0.1369, 0.1605, 0.2061, 0.0734, 0.0202, 0.1638, 0.1583, 0.183, 0.1886, 0.1008, 0.0663, 0.0183, 0.0404, 0.0108, 0.0143, 0.0091, 0.0038, 0.0096, 0.0142, 0.019, 0.014, 0.0099, 0.0092, 0.0052, 1.0,-1
+0.024, 0.0218, 0.0324, 0.0569, 0.033, 0.0513, 0.0897, 0.0713, 0.0569, 0.0389, 0.1934, 0.2434, 0.2906, 0.2606, 0.3811, 0.4997, 0.3015, 0.3655, 0.6791, 0.7307, 0.5053, 0.4441, 0.6987, 0.8133, 0.7781, 0.8943, 0.8929, 0.8913, 0.861, 0.8063, 0.554, 0.2446, 0.3459, 0.1615, 0.2467, 0.5564, 0.4681, 0.0979, 0.1582, 0.0751, 0.3321, 0.3745, 0.2666, 0.1078, 0.1418, 0.1687, 0.0738, 0.0634, 0.0144, 0.0226, 0.0061, 0.0162, 0.0146, 0.0093, 0.0112, 0.0094, 0.0054, 0.0019, 0.0066, 1.0,-1
+0.0094, 0.0611, 0.1136, 0.1203, 0.0403, 0.1227, 0.2495, 0.4566, 0.6587, 0.5079, 0.335, 0.0834, 0.3004, 0.3957, 0.3769, 0.3828, 0.1247, 0.1363, 0.2678, 0.9188, 0.9779, 0.3236, 0.1944, 0.1874, 0.0885, 0.3443, 0.2953, 0.5908, 0.4564, 0.7334, 0.1969, 0.279, 0.6212, 0.8681, 0.8621, 0.938, 0.8327, 0.948, 0.6721, 0.4436, 0.5163, 0.3809, 0.1557, 0.1449, 0.2662, 0.1806, 0.1699, 0.2559, 0.1129, 0.0201, 0.048, 0.0234, 0.0175, 0.0352, 0.0158, 0.0326, 0.0201, 0.0168, 0.0245, 1.0,1
+0.1083, 0.107, 0.0257, 0.0837, 0.0748, 0.1125, 0.3322, 0.459, 0.5526, 0.5966, 0.5304, 0.2251, 0.2402, 0.2689, 0.6646, 0.6632, 0.1674, 0.0837, 0.4331, 0.8718, 0.7992, 0.3712, 0.1703, 0.1611, 0.2086, 0.2847, 0.2211, 0.6134, 0.5807, 0.6925, 0.3825, 0.4303, 0.7791, 0.8703, 1.0, 0.9212, 0.9386, 0.9303, 0.7314, 0.4791, 0.2087, 0.2016, 0.1669, 0.2872, 0.4374, 0.3097, 0.1578, 0.0553, 0.0334, 0.0209, 0.0172, 0.018, 0.011, 0.0234, 0.0276, 0.0032, 0.0084, 0.0122, 0.0082, 1.0,1
+0.1371, 0.1226, 0.1385, 0.1484, 0.1776, 0.1428, 0.1773, 0.2161, 0.163, 0.2067, 0.4257, 0.5484, 0.7131, 0.7003, 0.6777, 0.7939, 0.9382, 0.8925, 0.9146, 0.7832, 0.796, 0.7983, 0.7716, 0.6615, 0.486, 0.5572, 0.4697, 0.564, 0.4517, 0.3369, 0.2684, 0.2339, 0.3052, 0.3016, 0.2753, 0.1041, 0.1757, 0.3156, 0.3603, 0.2736, 0.1301, 0.2458, 0.3404, 0.1753, 0.0679, 0.1062, 0.0643, 0.0532, 0.0531, 0.0272, 0.0171, 0.0118, 0.0129, 0.0344, 0.0065, 0.0067, 0.0022, 0.0079, 0.0146, 1.0,1

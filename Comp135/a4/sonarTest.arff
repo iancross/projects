@@ -1,0 +1,226 @@
+%
+% Note: original labels
+%{ Rock, Mine}
+% changed to -1,1
+% for comp135 assignment
+%
+% NAME: Sonar, Mines vs. Rocks
+% 
+% SUMMARY: This is the data set used by Gorman and Sejnowski in their study
+% of the classification of sonar signals using a neural network [1].  The
+% task is to train a network to discriminate between sonar signals bounced
+% off a metal cylinder and those bounced off a roughly cylindrical rock.
+% 
+% SOURCE: The data set was contributed to the benchmark collection by Terry
+% Sejnowski, now at the Salk Institute and the University of California at
+% San Deigo.  The data set was developed in collaboration with R. Paul
+% Gorman of Allied-Signal Aerospace Technology Center.
+% 
+% MAINTAINER: Scott E. Fahlman
+% 
+% PROBLEM DESCRIPTION:
+% 
+% The file "sonar.mines" contains 111 patterns obtained by bouncing sonar
+% signals off a metal cylinder at various angles and under various
+% conditions.  The file "sonar.rocks" contains 97 patterns obtained from
+% rocks under similar conditions.  The transmitted sonar signal is a
+% frequency-modulated chirp, rising in frequency.  The data set contains
+% signals obtained from a variety of different aspect angles, spanning 90
+% degrees for the cylinder and 180 degrees for the rock.
+% 
+% Each pattern is a set of 60 numbers in the range 0.0 to 1.0.  Each number
+% represents the energy within a particular frequency band, integrated over
+% a certain period of time.  The integration aperture for higher frequencies
+% occur later in time, since these frequencies are transmitted later during
+% the chirp.
+% 
+% The label associated with each record contains the letter "R" if the object
+% is a rock and "M" if it is a mine (metal cylinder).  The numbers in the
+% labels are in increasing order of aspect angle, but they do not encode the
+% angle directly.
+% 
+% METHODOLOGY: 
+% 
+% This data set can be used in a number of different ways to test learning
+% speed, quality of ultimate learning, ability to generalize, or combinations
+% of these factors.
+% 
+% In [1], Gorman and Sejnowski report two series of experiments: an
+% "aspect-angle independent" series, in which the whole data set is used
+% without controlling for aspect angle, and an "aspect-angle dependent"
+% series in which the training and testing sets were carefully controlled to
+% ensure that each set contained cases from each aspect angle in
+% appropriate proportions.
+% 
+% For the aspect-angle independent experiments the combined set of 208 cases
+% is divided randomly into 13 disjoint sets with 16 cases in each.  For each
+% experiment, 12 of these sets are used as training data, while the 13th is
+% reserved for testing.  The experiment is repeated 13 times so that every
+% case appears once as part of a test set.  The reported performance is an
+% average over the entire set of 13 different test sets, each run 10 times.
+% 
+% It was observed that this random division of the sample set led to rather
+% uneven performance.  A few of the splits gave poor results, presumably
+% because the test set contains some samples from aspect angles that are
+% under-represented in the corresponding training set.  This motivated Gorman
+% and Sejnowski to devise a different set of experiments in which an attempt
+% was made to balance the training and test sets so that each would have a
+% representative number of samples from all aspect angles.  Since detailed
+% aspect angle information was not present in the data base of samples, the
+% 208 samples were first divided into clusters, using a 60-dimensional
+% Euclidian metric; each of these clusters was then divided between the
+% 104-member training set and the 104-member test set.  
+% 
+% The actual training and testing samples used for the "aspect angle
+% dependent" experiments are marked in the data files.  The reported
+% performance is an average over 10 runs with this single division of the
+% data set.
+% 
+% A standard back-propagation network was used for all experiments.  The
+% network had 60 inputs and 2 output units, one indicating a cylinder and the
+% other a rock.  Experiments were run with no hidden units (direct
+% connections from each input to each output) and with a single hidden layer
+% with 2, 3, 6, 12, or 24 units.  Each network was trained by 300 epochs over
+% the entire training set.
+% 
+% The weight-update formulas used in this study were slightly different from
+% the standard form.  A learning rate of 2.0 and momentum of 0.0 was used.
+% Errors less than 0.2 were treated as zero.  Initial weights were uniform
+% random values in the range -0.3 to +0.3.
+% 
+% RESULTS: 
+% 
+% For the angle independent experiments, Gorman and Sejnowski report the
+% following results for networks with different numbers of hidden units:
+% 
+% Hidden	% Right on	Std.	% Right on	Std.
+% Units	Training set	Dev.	Test Set	Dev.
+% ------	------------	----	----------	----
+% 0	89.4		2.1	77.1		8.3
+% 2	96.5		0.7	81.9		6.2
+% 3	98.8		0.4	82.0		7.3
+% 6	99.7		0.2	83.5		5.6
+% 12	99.8		0.1	84.7		5.7
+% 24	99.8		0.1	84.5		5.7
+% 
+% For the angle-dependent experiments Gorman and Sejnowski report the
+% following results:
+% 
+% Hidden	% Right on	Std.	% Right on	Std.
+% Units	Training set	Dev.	Test Set	Dev.
+% ------	------------	----	----------	----
+% 0	79.3		3.4	73.1		4.8
+% 2	96.2		2.2	85.7		6.3
+% 3	98.1		1.5	87.6		3.0
+% 6	99.4		0.9	89.3		2.4
+% 12	99.8		0.6	90.4		1.8
+% 24     100.0		0.0	89.2		1.4
+% 
+% Not surprisingly, the network's performance on the test set was somewhat
+% better when the aspect angles in the training and test sets were balanced.
+% 
+% Gorman and Sejnowski further report that a nearest neighbor classifier on
+% the same data gave an 82.7% probability of correct classification.
+% 
+% Three trained human subjects were each tested on 100 signals, chosen at
+% random from the set of 208 returns used to create this data set.  Their
+% responses ranged between 88% and 97% correct.  However, they may have been
+% using information from the raw sonar signal that is not preserved in the
+% processed data sets presented here.
+% 
+% REFERENCES: 
+% 
+% 1. Gorman, R. P., and Sejnowski, T. J. (1988).  "Analysis of Hidden Units
+% in a Layered Network Trained to Classify Sonar Targets" in Neural Networks,
+% Vol. 1, pp. 75-89.
+%
+%
+%
+%
+% Relabeled values in attribute 'Class'
+%    From: R                       To: Rock                
+%    From: M                       To: Mine                
+%
+@relation sonar
+@attribute 'attribute_1' real
+@attribute 'attribute_2' real
+@attribute 'attribute_3' real
+@attribute 'attribute_4' real
+@attribute 'attribute_5' real
+@attribute 'attribute_6' real
+@attribute 'attribute_7' real
+@attribute 'attribute_8' real
+@attribute 'attribute_9' real
+@attribute 'attribute_10' real
+@attribute 'attribute_11' real
+@attribute 'attribute_12' real
+@attribute 'attribute_13' real
+@attribute 'attribute_14' real
+@attribute 'attribute_15' real
+@attribute 'attribute_16' real
+@attribute 'attribute_17' real
+@attribute 'attribute_18' real
+@attribute 'attribute_19' real
+@attribute 'attribute_20' real
+@attribute 'attribute_21' real
+@attribute 'attribute_22' real
+@attribute 'attribute_23' real
+@attribute 'attribute_24' real
+@attribute 'attribute_25' real
+@attribute 'attribute_26' real
+@attribute 'attribute_27' real
+@attribute 'attribute_28' real
+@attribute 'attribute_29' real
+@attribute 'attribute_30' real
+@attribute 'attribute_31' real
+@attribute 'attribute_32' real
+@attribute 'attribute_33' real
+@attribute 'attribute_34' real
+@attribute 'attribute_35' real
+@attribute 'attribute_36' real
+@attribute 'attribute_37' real
+@attribute 'attribute_38' real
+@attribute 'attribute_39' real
+@attribute 'attribute_40' real
+@attribute 'attribute_41' real
+@attribute 'attribute_42' real
+@attribute 'attribute_43' real
+@attribute 'attribute_44' real
+@attribute 'attribute_45' real
+@attribute 'attribute_46' real
+@attribute 'attribute_47' real
+@attribute 'attribute_48' real
+@attribute 'attribute_49' real
+@attribute 'attribute_50' real
+@attribute 'attribute_51' real
+@attribute 'attribute_52' real
+@attribute 'attribute_53' real
+@attribute 'attribute_54' real
+@attribute 'attribute_55' real
+@attribute 'attribute_56' real
+@attribute 'attribute_57' real
+@attribute 'attribute_58' real
+@attribute 'attribute_59' real
+@attribute 'attribute_60' real
+@attribute 'Class' { -1, 1}
+@data
+0.0217,0.0152,0.0346,0.0346,0.0484,0.0526,0.0773,0.0862,0.1451,0.211,0.2343,0.2087,0.1645,0.1689,0.165,0.1967,0.2934,0.3709,0.4309,0.4161,0.5116,0.6501,0.7717,0.8491,0.9104,0.8912,0.8189,0.6779,0.5368,0.5207,0.5651,0.5749,0.525,0.4255,0.333,0.2331,0.1451,0.1648,0.2694,0.373,0.4467,0.4133,0.3743,0.3021,0.2069,0.179,0.1689,0.1341,0.0769,0.0222,0.0205,0.0123,0.0067,0.0011,0.0026,0.0049,0.0029,0.0022,0.0022,0.0032,1
+0.0091,0.0213,0.0206,0.0505,0.0657,0.0795,0.097,0.0872,0.0743,0.0837,0.1579,0.0898,0.0309,0.1856,0.2969,0.2032,0.1264,0.1655,0.1661,0.2091,0.231,0.446,0.6634,0.6933,0.7663,0.8206,0.7049,0.756,0.7466,0.6387,0.4846,0.3328,0.5356,0.8741,0.8573,0.6718,0.3446,0.315,0.2702,0.2598,0.2742,0.3594,0.4382,0.246,0.0758,0.0187,0.0797,0.0748,0.0367,0.0155,0.03,0.0112,0.0112,0.0102,0.0026,0.0097,0.0098,0.0043,0.0071,0.0108,-1
+0.0188,0.037,0.0953,0.0824,0.0249,0.0488,0.1424,0.1972,0.1873,0.1806,0.2139,0.1523,0.1975,0.4844,0.7298,0.7807,0.7906,0.6122,0.42,0.2807,0.5148,0.7569,0.8596,1,0.8457,0.6797,0.6971,0.5843,0.4772,0.5201,0.4241,0.1592,0.1668,0.0588,0.3967,0.7147,0.7319,0.3509,0.0589,0.269,0.42,0.3874,0.244,0.2,0.2307,0.1886,0.196,0.1701,0.1366,0.0398,0.0143,0.0093,0.0033,0.0113,0.003,0.0057,0.009,0.0057,0.0068,0.0024,-1
+0.0856,0.0454,0.0382,0.0203,0.0385,0.0534,0.214,0.311,0.2837,0.2751,0.2707,0.0946,0.102,0.4519,0.6737,0.6699,0.7066,0.5632,0.3785,0.2721,0.5297,0.7697,0.8643,0.9304,0.9372,0.6247,0.6024,0.681,0.5047,0.5775,0.4754,0.24,0.2779,0.1997,0.5305,0.7409,0.7775,0.4424,0.1416,0.3508,0.4482,0.4208,0.3054,0.2235,0.2611,0.2798,0.2392,0.2021,0.1326,0.0358,0.0128,0.0172,0.0138,0.0079,0.0037,0.0051,0.0258,0.0102,0.0037,0.0037,-1
+0.0209,0.0191,0.0411,0.0321,0.0698,0.1579,0.1438,0.1402,0.3048,0.3914,0.3504,0.3669,0.3943,0.3311,0.3331,0.3002,0.2324,0.1381,0.345,0.4428,0.489,0.3677,0.4379,0.4864,0.6207,0.7256,0.6624,0.7689,0.7981,0.8577,0.9273,0.7009,0.4851,0.3409,0.1406,0.1147,0.1433,0.182,0.3605,0.5529,0.5988,0.5077,0.5512,0.5027,0.7034,0.5904,0.4069,0.2761,0.1584,0.051,0.0054,0.0078,0.0201,0.0104,0.0039,0.0031,0.0062,0.0087,0.007,0.0042,1
+0.0187,0.0346,0.0168,0.0177,0.0393,0.163,0.2028,0.1694,0.2328,0.2684,0.3108,0.2933,0.2275,0.0994,0.1801,0.22,0.2732,0.2862,0.2034,0.174,0.413,0.6879,0.812,0.8453,0.8919,0.93,0.9987,1,0.8104,0.6199,0.6041,0.5547,0.416,0.1472,0.0849,0.0608,0.0969,0.1411,0.1676,0.12,0.1201,0.1036,0.1977,0.1339,0.0902,0.1085,0.1521,0.1363,0.0858,0.029,0.0203,0.0116,0.0098,0.0199,0.0033,0.0101,0.0065,0.0115,0.0193,0.0157,1
+0.0231,0.0315,0.017,0.0226,0.041,0.0116,0.0223,0.0805,0.2365,0.2461,0.2245,0.152,0.1732,0.3099,0.438,0.5595,0.682,0.6164,0.6803,0.8435,0.9921,1,0.7983,0.5426,0.3952,0.5179,0.565,0.3042,0.1881,0.396,0.2286,0.3544,0.4187,0.2398,0.1847,0.376,0.4331,0.3626,0.2519,0.187,0.1046,0.2339,0.1991,0.11,0.0684,0.0303,0.0674,0.0785,0.0455,0.0246,0.0151,0.0125,0.0036,0.0123,0.0043,0.0114,0.0052,0.0091,0.0008,0.0092,1
+0.0208,0.0186,0.0131,0.0211,0.061,0.0613,0.0612,0.0506,0.0989,0.1093,0.1063,0.1179,0.1291,0.1591,0.168,0.1918,0.1615,0.1647,0.1397,0.1426,0.2429,0.2816,0.429,0.6443,0.9061,1,0.8087,0.6119,0.526,0.3677,0.2746,0.102,0.1339,0.1582,0.1952,0.1787,0.0429,0.1096,0.1762,0.2481,0.315,0.292,0.1902,0.0696,0.0758,0.091,0.0441,0.0244,0.0265,0.0095,0.014,0.0074,0.0063,0.0081,0.0087,0.0044,0.0028,0.0019,0.0049,0.0023,-1
+0.0211,0.0319,0.0415,0.0286,0.0121,0.0438,0.1299,0.139,0.0695,0.0568,0.0869,0.1935,0.1478,0.1871,0.1994,0.3283,0.6861,0.5814,0.25,0.1734,0.3363,0.5588,0.6592,0.7012,0.8099,0.8901,0.8745,0.7887,0.8725,0.9376,0.892,0.7508,0.6832,0.761,0.9017,1,0.9123,0.7388,0.5915,0.4057,0.3019,0.2331,0.2931,0.2298,0.2391,0.191,0.1096,0.03,0.0171,0.0383,0.0053,0.009,0.0042,0.0153,0.0106,0.002,0.0105,0.0049,0.007,0.008,-1
+0.0117,0.0069,0.0279,0.0583,0.0915,0.1267,0.1577,0.1927,0.2361,0.2169,0.118,0.0754,0.2782,0.3758,0.5093,0.6592,0.7071,0.7532,0.8357,0.8593,0.9615,0.9838,0.8705,0.6403,0.5067,0.5395,0.6934,0.8487,0.8213,0.5962,0.295,0.2758,0.2885,0.1893,0.1446,0.0955,0.0888,0.0836,0.0894,0.1547,0.2318,0.2225,0.1035,0.1721,0.2017,0.1787,0.1112,0.0398,0.0305,0.0084,0.0039,0.0053,0.0029,0.002,0.0013,0.0029,0.002,0.0062,0.0026,0.0052,1
+0.0635,0.0709,0.0453,0.0333,0.0185,0.126,0.1015,0.1918,0.3362,0.39,0.4674,0.5632,0.5506,0.4343,0.3052,0.3492,0.3975,0.3875,0.528,0.7198,0.7702,0.8562,0.8688,0.9236,1,0.9662,0.9822,0.736,0.4158,0.2918,0.328,0.369,0.345,0.2863,0.0864,0.3724,0.4649,0.3488,0.1817,0.1142,0.122,0.2621,0.4461,0.4726,0.3263,0.1423,0.039,0.0406,0.0311,0.0086,0.0154,0.0048,0.0025,0.0087,0.0072,0.0095,0.0086,0.0085,0.004,0.0051,1
+0.0378,0.0318,0.0423,0.035,0.1787,0.1635,0.0887,0.0817,0.1779,0.2053,0.3135,0.3118,0.3686,0.3885,0.585,0.7868,0.9739,1,0.9843,0.861,0.8443,0.9061,0.5847,0.4033,0.5946,0.6793,0.6389,0.5002,0.5578,0.4831,0.4729,0.3318,0.3969,0.3894,0.2314,0.1036,0.1312,0.0864,0.2569,0.3179,0.2649,0.2714,0.1713,0.0584,0.123,0.22,0.2198,0.1074,0.0423,0.0162,0.0093,0.0046,0.0044,0.0078,0.0102,0.0065,0.0061,0.0062,0.0043,0.0053,-1
+0.0131,0.0068,0.0308,0.0311,0.0085,0.0767,0.0771,0.064,0.0726,0.0901,0.075,0.0844,0.1226,0.1619,0.2317,0.2934,0.3526,0.3657,0.3221,0.3093,0.4084,0.4285,0.4663,0.5956,0.6948,0.8386,0.8875,0.6404,0.3308,0.3425,0.492,0.4592,0.3034,0.4366,0.5175,0.5122,0.4746,0.4902,0.4603,0.446,0.4196,0.2873,0.2296,0.0949,0.0095,0.0527,0.0383,0.0107,0.0108,0.0077,0.0109,0.0062,0.0028,0.004,0.0075,0.0039,0.0053,0.0013,0.0052,0.0023,-1
+0.0331,0.0423,0.0474,0.0818,0.0835,0.0756,0.0374,0.0961,0.0548,0.0193,0.0897,0.1734,0.1936,0.2803,0.3313,0.502,0.636,0.7096,0.8333,0.873,0.8073,0.7507,0.7526,0.7298,0.6177,0.4946,0.4531,0.4099,0.454,0.4124,0.3139,0.3194,0.3692,0.3776,0.4469,0.4777,0.4716,0.4664,0.3893,0.4255,0.4064,0.3712,0.3863,0.2802,0.1283,0.1117,0.1303,0.0787,0.0436,0.0224,0.0133,0.0078,0.0174,0.0176,0.0038,0.0129,0.0066,0.0044,0.0134,0.0092,1
+0.0453,0.0523,0.0843,0.0689,0.1183,0.2583,0.2156,0.3481,0.3337,0.2872,0.4918,0.6552,0.6919,0.7797,0.7464,0.9444,1,0.8874,0.8024,0.7818,0.5212,0.4052,0.3957,0.3914,0.325,0.32,0.3271,0.2767,0.4423,0.2028,0.3788,0.2947,0.1984,0.2341,0.1306,0.4182,0.3835,0.1057,0.184,0.197,0.1674,0.0583,0.1401,0.1628,0.0621,0.0203,0.053,0.0742,0.0409,0.0061,0.0125,0.0084,0.0089,0.0048,0.0094,0.0191,0.014,0.0049,0.0052,0.0044,-1
+0.0068,0.0232,0.0513,0.0444,0.0249,0.0637,0.0422,0.113,0.1911,0.2475,0.1606,0.0922,0.2398,0.322,0.4295,0.2652,0.0666,0.1442,0.2373,0.2595,0.2493,0.3903,0.6384,0.8037,0.7026,0.6874,0.6997,0.8558,1,0.9621,0.8996,0.7575,0.6902,0.5686,0.4396,0.4546,0.2959,0.1587,0.1681,0.0842,0.1173,0.1754,0.2728,0.1705,0.0194,0.0213,0.0354,0.042,0.0093,0.0204,0.0199,0.0173,0.0163,0.0055,0.0045,0.0068,0.0041,0.0052,0.0194,0.0105,-1
+0.0115,0.015,0.0136,0.0076,0.0211,0.1058,0.1023,0.044,0.0931,0.0734,0.074,0.0622,0.1055,0.1183,0.1721,0.2584,0.3232,0.3817,0.4243,0.4217,0.4449,0.4075,0.3306,0.4012,0.4466,0.5218,0.7552,0.9503,1,0.9084,0.8283,0.7571,0.7262,0.6152,0.568,0.5757,0.5324,0.3672,0.1669,0.0866,0.0646,0.1891,0.2683,0.2887,0.2341,0.1668,0.1015,0.1195,0.0704,0.0167,0.0107,0.0091,0.0016,0.0084,0.0064,0.0026,0.0029,0.0037,0.007,0.0041,-1
+0.0079,0.0086,0.0055,0.025,0.0344,0.0546,0.0528,0.0958,0.1009,0.124,0.1097,0.1215,0.1874,0.3383,0.3227,0.2723,0.3943,0.6432,0.7271,0.8673,0.9674,0.9847,0.948,0.8036,0.6833,0.5136,0.309,0.0832,0.4019,0.2344,0.1905,0.1235,0.1717,0.2351,0.2489,0.3649,0.3382,0.1589,0.0989,0.1089,0.1043,0.0839,0.1391,0.0819,0.0678,0.0663,0.1202,0.0692,0.0152,0.0266,0.0174,0.0176,0.0127,0.0088,0.0098,0.0019,0.0059,0.0058,0.0059,0.0032,-1
+0.0249,0.0119,0.0277,0.076,0.1218,0.1538,0.1192,0.1229,0.2119,0.2531,0.2855,0.2961,0.3341,0.4287,0.5205,0.6087,0.7236,0.7577,0.7726,0.8098,0.8995,0.9247,0.9365,0.9853,0.9776,1,0.9896,0.9076,0.7306,0.5758,0.4469,0.3719,0.2079,0.0955,0.0488,0.1406,0.2554,0.2054,0.1614,0.2232,0.1773,0.2293,0.2521,0.1464,0.0673,0.0965,0.1492,0.1128,0.0463,0.0193,0.014,0.0027,0.0068,0.015,0.0012,0.0133,0.0048,0.0244,0.0077,0.0074,1
+0.0228,0.0106,0.013,0.0842,0.1117,0.1506,0.1776,0.0997,0.1428,0.2227,0.2621,0.3109,0.2859,0.3316,0.3755,0.4499,0.4765,0.6254,0.7304,0.8702,0.9349,0.9614,0.9126,0.9443,1,0.9455,0.8815,0.752,0.7068,0.5986,0.3857,0.251,0.2162,0.0968,0.1323,0.1344,0.225,0.3244,0.3939,0.3806,0.3258,0.3654,0.2983,0.1779,0.1535,0.1199,0.0959,0.0765,0.0649,0.0313,0.0185,0.0098,0.0178,0.0077,0.0074,0.0095,0.0055,0.0045,0.0063,0.0039,1
