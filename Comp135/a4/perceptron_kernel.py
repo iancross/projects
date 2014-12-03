@@ -13,6 +13,16 @@ from numpy import asarray,array, dot, random
 def dotProduct(weights, currList):
 	return sum(a*b for a,b in zip(weights,currList))
 
+def polyKernel(weights, currList, d):
+	return (dotProduct(weights,currList) + 1) ** d
+
+def RBFKernel(weights, currList, s):
+	numer = math.pow(norm(weights)-norm(currList),2)
+	denom = 2*math.pow(s,2)
+	return pow(math.e, -(numer/denom))
+
+def norm(vector):
+	return math.sqrt(sum(a**2 for a in vector))
 #takes an int and this is where the algo makes the guess
 def sign(x):
 	if x < 0:
@@ -26,22 +36,19 @@ def updateWeights(weights, currList,rate, correct):
 		weights[i] += rate*val*correct
 	return weights
 
-def calculateTau(trainingData):
+def calculateTauPrimal(trainingData):
 	total = 0
 	count = 0
-	for line in trainingData:
-		total += math.sqrt(dotProduct(line[0],line[0]))
-		count += 1
-	return 0.1* total/count
+	for line,_ in trainingData:
+		total += norm(line)
+	return 0.1* total/len(trainingData)
 
-def PwM(trainingData,testingData,iterations, w):
+def calculateTauPoly(trainingData):
+	return
 
-		#shuffle these values so we don't get all positives at the beginning
-	shuffle(trainingData)
-	shuffle(testingData)
+
+def PwMPrimal(trainingData,testingData,iterations, w, tau):
 	#training
-	tau = calculateTau(trainingData)
-
 	learningRate = 0.1 
 	for x in range(0, iterations):
 		for i in trainingData:
@@ -86,42 +93,57 @@ def getSTD(avg, acc):
 	stdDeviation = total/float(len(acc))
 	return stdDeviation
 
+"""contains the training set in index 0 and the test set in 1"""
+dataFiles = []
 
 dataLines = []
+for filenum in range(0,2):
+	if filenum == 0:
+		infile = open("backTrain.arff", "r")
+	if filenum == 1:
+		infile = open("backTest.arff", "r")
+	data = False
+	for line in infile:
+		if data:
+			curr = line[:-1]
+			curr = curr.split(',');
 
-infile = open("diabetes.arff","r")
-data = False
-for line in infile:
-	if data:
-		curr = line[:-1]
-		curr = curr.split(',');
+			#add a one at the end of the array for the threshold
+			array1 = curr[0:-2] + [1]
+			for i, val in enumerate(array1):
+				array1[i] = float(val)
+			
+			curr = (array1, int(curr[-1]))
+			dataLines.append(curr)
 
-		#add a one at the end of the array for the threshold
-		array1 = curr[0:-2] + [1]
-		for i, val in enumerate(array1):
-			array1[i] = float(val)
-		
-		curr = (array1, int(curr[-1]))
-		dataLines.append(curr)
-
-	if line == "@data\n":
-		data = True
+		if line[:5] == "@data":
+			data = True
+	"""print dataLines"""
+	dataFiles += [dataLines]
 
 totalAccPwM = []
-wPwM = [0] * len(dataLinesT[0][0])
+wPwM = [0] * len(dataFiles[0][0][0])
 
 #lists of the accuracies taken from each iteration
+numIters = 50
+tau = calculateTauPrimal(dataFiles[0])
+_,accPwM = PwMPrimal(dataFiles[0],dataFiles[1],numIters,wPwM, tau)
+totalAccPwM += [accPwM]
 
 currAccPwM = []
-for numIters in range(1,50):
-	wPwM,accPwM = PwM(train,test,numIters,wPwM)
-	currAccPwM += [accPwM]
-totalAccPwM.append(currAccPwM)
+for d in range(1,6):
+	tau = calculateTauPoly(d)
+	_,accPwM = PwMPoly(dataFiles[0],dataFiles[1],numIters,wPwM, tau)
+	totalAccPwM += [accPwM]
 
-print "PwM ----------------------------------------"
-print "accuracies, standard deviation"
-getStats(totalAccPwM)
-
+for s in range(1,4):
+	if s == 1:
+		PwMRBF(dataFiles[0],dataFiles[1],numIters,wPwM, 0.1)
+	elif s == 2:
+		PwMRBF(dataFiles[0],dataFiles[1],numIters,wPwM, 0.5)
+	elif s == 3:
+		PwMRBF(dataFiles[0],dataFiles[1],numIters,wPwM, 1)
+print totalAccPwM
 
 
 
