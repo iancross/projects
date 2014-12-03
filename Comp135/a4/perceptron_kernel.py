@@ -38,14 +38,26 @@ def updateWeights(weights, currList,rate, correct):
 
 def calculateTauPrimal(trainingData):
 	total = 0
-	count = 0
 	for line,_ in trainingData:
 		total += norm(line)
 	return 0.1* total/len(trainingData)
 
-def calculateTauPoly(trainingData):
-	return
+def calculateTauPoly(trainingData,d):
+	total = 0
+	for line,_ in trainingData:
+		total += math.sqrt(polyKernel(line,line,d))
+	return 0.1* total/len(trainingData)
+def calculateTauRBF(trainingData,s):
+	total = 0
+	for line,_ in trainingData:
+		total += math.sqrt(RBFKernel(line,line,d))
+	return 0.1* total/len(trainingData)
 
+def getTestValue(trainingData,x,alpha):
+	total = 0
+	for i,(vector,y) in enumerate(trainingData):
+		total += alpha[i]*y*dotProduct(vector*x)
+	return total
 
 def PwMPrimal(trainingData,testingData,iterations, w, tau):
 	#training
@@ -57,6 +69,30 @@ def PwMPrimal(trainingData,testingData,iterations, w, tau):
 			if (expected*dotProduct(w,x)) < tau:
 				w = updateWeights(w,x,learningRate, expected);
 
+	correct = 0.0
+	wrong = 0.0
+	for i in testingData:
+		x,expected = i
+		O = sign(dotProduct(w,x))
+		if O != expected:
+			wrong+=1
+		else:
+			correct+=1
+	accuracy = (correct)/(wrong+correct)
+	return w,accuracy
+
+def PwMDual(trainingData,testingData,iterations,alpha,tau):
+	#training
+	learningRate = 0.1 
+	for x in range(0, iterations):
+		for i in trainingData:
+			x, expected = i 
+			value = getTestValue(trainingData,x,alpha) #where im at
+			O = sign(value)
+			if (expected*value < tau):
+				w = updateWeights(w,x,learningRate, expected); #<- update alpha
+
+	#testing
 	correct = 0.0
 	wrong = 0.0
 	for i in testingData:
@@ -121,28 +157,38 @@ for filenum in range(0,2):
 	"""print dataLines"""
 	dataFiles += [dataLines]
 
+train = dataFiles[0]
+test = dataFiles[1]
+
 totalAccPwM = []
-wPwM = [0] * len(dataFiles[0][0][0])
+wPwM = [0] * len(train[0][0])
 
 #lists of the accuracies taken from each iteration
 numIters = 50
-tau = calculateTauPrimal(dataFiles[0])
-_,accPwM = PwMPrimal(dataFiles[0],dataFiles[1],numIters,wPwM, tau)
+tau = calculateTauPrimal(train)
+_,accPwM = PwMPrimal(train,test,numIters,wPwM, tau)
 totalAccPwM += [accPwM]
 
 currAccPwM = []
 for d in range(1,6):
-	tau = calculateTauPoly(d)
-	_,accPwM = PwMPoly(dataFiles[0],dataFiles[1],numIters,wPwM, tau)
+	tau = calculateTauPoly(train, d)
+	_,accPwM = PwMPrimal(train,test,numIters,wPwM, tau)
 	totalAccPwM += [accPwM]
 
+print totalAccPwM
 for s in range(1,4):
 	if s == 1:
-		PwMRBF(dataFiles[0],dataFiles[1],numIters,wPwM, 0.1)
+		print "test"
+		tau = calculateTauRBF(train, .1)
+		_,accPwM = PwMPrimal(train,test,numIters,wPwM, tau)
 	elif s == 2:
-		PwMRBF(dataFiles[0],dataFiles[1],numIters,wPwM, 0.5)
+		tau = calculateTauRBF(train, .5)
+		_,accPwM = PwMPrimal(train,test,numIters,wPwM, tau)
 	elif s == 3:
-		PwMRBF(dataFiles[0],dataFiles[1],numIters,wPwM, 1)
+		tau = calculateTauRBF(train, 1)
+		_,accPwM = PwMPrimal(train,test,numIters,wPwM, tau)
+	totalAccPwM += [accPwM]
+
 print totalAccPwM
 
 
